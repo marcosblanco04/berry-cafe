@@ -55,7 +55,11 @@
     filter: drop-shadow(0 0 28px rgba(106,61,240,.45));
   }
   .side-char.left  { left: 0; }
-  .side-char.right { right: 0; transform: scaleX(-1); }
+  .side-char.right { right: 0; transform: scaleX(-1); width: clamp(220px, 17vw, 320px); }
+
+  @media (max-width: 768px) {
+    .side-char { display: none; }
+  }
 
   /* Header logo banner */
   .header-logo {
