@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Berry Café — Bits Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cinzel+Decorative:wght@700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Press+Start+2P&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  :root {
+    --bg: #08081a;
+    --bg-2: #0d0c25;
+    --panel: #110f2e;
+    --panel-2: #181537;
+    --border: #2b1f5a;
+    --border-glow: #6a3df0;
+    --gold: #f5c860;
+    --gold-deep: #b88a2a;
+    --gold-soft: #ffe091;
+    --berry: #7a4dff;
+    --berry-deep: #3d1f8a;
+    --berry-light: #b08cff;
+    --pink: #ff6fbf;
+    --crimson: #b8324d;
+    --ink: #d9d2ff;
+    --ink-dim: #8a82b8;
+    --ink-faint: #5a5380;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Crimson Text', serif;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  /* Starfield background */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(1px 1px at 20% 30%, #b08cff 50%, transparent 100%),
+      radial-gradient(1px 1px at 70% 80%, #6f5dd6 50%, transparent 100%),
+      radial-gradient(1px 1px at 40% 60%, #f5c860 50%, transparent 100%),
+      radial-gradient(1px 1px at 90% 20%, #b08cff 50%, transparent 100%),
+      radial-gradient(1px 1px at 10% 90%, #ff6fbf 50%, transparent 100%),
+      radial-gradient(1px 1px at 55% 15%, #b08cff 50%, transparent 100%),
+      radial-gradient(1px 1px at 85% 55%, #6f5dd6 50%, transparent 100%),
+      radial-gradient(1px 1px at 30% 75%, #f5c860 50%, transparent 100%),
+      radial-gradient(2px 2px at 25% 45%, rgba(176,140,255,.6) 50%, transparent 100%),
+      radial-gradient(2px 2px at 75% 35%, rgba(245,200,96,.5) 50%, transparent 100%),
+      radial-gradient(circle at 15% 15%, rgba(106,61,240,.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(184,50,77,.06), transparent 45%),
+      linear-gradient(180deg, #08081a 0%, #0a0820 50%, #08081a 100%);
+    background-size: 100% 100%;
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  /* Floating decorations layer */
+  .deco {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Watermark item-name overlay on card images */
+  .img-wrap .img-watermark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    color: var(--gold, #f5c860);
+    text-shadow: 0 0 8px rgba(245,200,96,.35);
+    letter-spacing: .04em;
+    font-size: clamp(14px, 2vw, 22px);
+    line-height: 1.1;
+    padding: 0 8%;
+    opacity: .1;
+    pointer-events: none;
+    z-index: 3;
+    text-transform: uppercase;
+    mix-blend-mode: screen;
+  }
+  .page, header, .menu-col, aside.sperm-bowl, .tweaks-panel, .chapter, .grid, footer { position: relative; z-index: 1; }
+
+  /* Floating menu-item images */
+  .deco .float-img {
+    position: absolute;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 4px 14px rgba(106,61,240,.35));
+    animation: img-float linear infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes img-float {
+    0%   { transform: translateY(0) rotate(var(--rot, 0deg)); opacity: 0; }
+    10%  { opacity: var(--op, 0.15); }
+    85%  { opacity: var(--op, 0.15); }
+    100% { transform: translateY(-115vh) rotate(var(--rot-end, 8deg)); opacity: 0; }
+  }
+
+  /* Layout */
+  .page {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 24px 48px 80px;
+    display: flex;
+    align-items: flex-start;
+    gap: 48px;
+    position: relative;
+  }
+  .menu-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 16px 0 24px;
+    position: relative;
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    overflow: visible;
+  }
+  .crest {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--berry-light);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: .55em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    opacity: .8;
+  }
+  .crest::before, .crest::after {
+    content: "";
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--berry-light), transparent);
+  }
+  h1.title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: clamp(44px, 6.2vw, 96px);
+    line-height: .95;
+    margin: 0;
+    padding-right: 60px;
+    padding-left: 60px;
+    background: linear-gradient(180deg, #ffe091 0%, #f5c860 45%, #b88a2a 75%, #6b4a14 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow:
+      0 0 28px rgba(245,200,96,.32),
+      0 0 60px rgba(245,200,96,.18);
+    letter-spacing: .02em;
+    position: relative;
+    overflow: visible;
+    white-space: nowrap;
+  }
+  h1.title::before {
+    content: "✦";
+    position: absolute;
+    left: 8%;
+    top: 10%;
+    color: var(--gold-soft);
+    font-size: .25em;
+    text-shadow: 0 0 10px var(--gold);
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  h1.title::after {
+    content: "✦";
+    position: absolute;
+    right: 10%;
+    top: 18%;
+    color: var(--gold-soft);
+    font-size: .2em;
+    text-shadow: 0 0 10px var(--gold);
+    animation: twinkle 3s ease-in-out infinite .8s;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: .4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  .subtitle {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .55em;
+    text-transform: uppercase;
+    color: #e0d0ff;
+    margin: 14px 0 0;
+  }
+  .header-rule {
+    width: 60%;
+    margin: 18px auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+    opacity: .5;
+  }
+  .tagline {
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    color: #e0d0ff;
+    font-size: 19px;
+    margin: 14px 0 0;
+    letter-spacing: .04em;
+    opacity: 1;
+  }
+  .tagline .accent { color: var(--gold-soft); font-weight: 600; font-style: normal; }
+
+  /* Chapter divider */
+  .chapter {
+    text-align: center;
+    padding: var(--chapter-pad, 18px 0);
+    width: 100%;
+    max-width: 880px;
+  }
+  .chapter:first-of-type { padding-top: 8px; }
+  .chapter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    color: #c9b3ff;
+    text-shadow: 0 0 10px rgba(176,140,255,.5);
+  }
+  .chapter-label::before, .chapter-label::after {
+    content: "";
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+  }
+  .chapter-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: .14em;
+    color: var(--gold-soft);
+    margin: 14px 0 6px;
+    text-shadow: 0 0 18px rgba(245,200,96,.3);
+  }
+  .chapter-range {
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    color: #c9b8ff;
+    font-size: 15px;
+    letter-spacing: .08em;
+  }
+
+  /* Card grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--grid-gap, 22px);
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  .card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    background:
+      linear-gradient(160deg, rgba(122,77,255,.06) 0%, transparent 50%),
+      linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: var(--card-pad, 16px 18px 18px);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    box-shadow:
+      inset 0 1px 0 rgba(176,140,255,.06),
+      0 8px 24px rgba(0,0,0,.4);
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(122,77,255,.5), rgba(43,31,90,.2) 40%, rgba(245,200,96,.25));
+    -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: .8;
+  }
+  .card::after {
+    /* corner sparkles */
+    content: "✦";
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-size: 10px;
+    color: var(--berry-light);
+    opacity: .5;
+    text-shadow: 0 0 6px currentColor;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-glow);
+    filter: brightness(1.12);
+    box-shadow:
+      inset 0 1px 0 rgba(176,140,255,.12),
+      0 16px 36px rgba(106,61,240,.4),
+      0 0 0 1px rgba(176,140,255,.25),
+      0 0 28px rgba(176,140,255,.25);
+  }
+  .card:focus-visible {
+    outline: 2px solid var(--berry-light);
+    outline-offset: 4px;
+  }
+
+  .img-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background:
+      radial-gradient(circle at 50% 60%, rgba(122,77,255,.18), transparent 60%),
+      linear-gradient(180deg, #0a0820 0%, #14102e 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(122,77,255,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .img-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1px 1px at 15% 25%, rgba(245,200,96,.5), transparent),
+      radial-gradient(1px 1px at 85% 70%, rgba(176,140,255,.5), transparent),
+      radial-gradient(1px 1px at 30% 80%, rgba(255,111,191,.5), transparent),
+      radial-gradient(1px 1px at 70% 20%, rgba(245,200,96,.5), transparent);
+  }
+  .img-wrap img {
+    position: relative;
+    width: 88%;
+    height: 88%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 4px 14px rgba(0,0,0,.5));
+  }
+
+  .bits-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: .12em;
+    color: #18130a;
+    background: linear-gradient(180deg, #FFE066 0%, #FFD700 55%, #E5B800 100%);
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #FFE066;
+    box-shadow:
+      0 0 20px rgba(255,215,0,.55),
+      inset 0 1px 0 rgba(255,255,255,.65),
+      inset 0 -2px 0 rgba(140,90,0,.35);
+    text-shadow: 0 1px 0 rgba(255,235,150,.7);
+    z-index: 2;
+    white-space: nowrap;
+  }
+  .bits-badge .num { font-size: 17px; font-weight: 900; }
+
+  .item-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #FFE091;
+    margin: 0 0 6px;
+    text-shadow: 0 0 12px rgba(245,200,96,.25);
+  }
+  .item-action {
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: #c9b8ff;
+    opacity: 1;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .item-action::before {
+    content: "❝ ";
+    color: var(--berry-light);
+    font-style: normal;
+    opacity: .6;
+  }
+  .item-action::after {
+    content: " ❞";
+    color: var(--berry-light);
+    font-style: normal;
+    opacity: .6;
+  }
+
+  /* Sticky right panel */
+  aside.sperm-bowl {
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+    width: 280px;
+    flex-shrink: 0;
+    margin-left: 80px;
+    margin-right: -40px;
+    margin-top: 280px;
+  }
+  .bowl-card {
+    position: relative;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(122,77,255,.18), transparent 55%),
+      linear-gradient(180deg, #160f3c 0%, #0c0824 100%);
+    border: 1px solid rgba(122,77,255,.45);
+    border-radius: 16px;
+    padding: 26px 22px 28px;
+    box-shadow:
+      0 0 0 1px rgba(176,140,255,.08),
+      0 0 28px rgba(106,61,240,.25),
+      0 14px 40px rgba(0,0,0,.5),
+      inset 0 1px 0 rgba(176,140,255,.1);
+    overflow: hidden;
+  }
+  .bowl-card::before {
+    /* hanging café sign nails */
+    content: "";
+    position: absolute;
+    top: 8px; left: 14px; right: 14px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,200,96,.4), transparent);
+  }
+  .bowl-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    background:
+      radial-gradient(1px 1px at 12% 18%, rgba(245,200,96,.7), transparent),
+      radial-gradient(1px 1px at 88% 22%, rgba(176,140,255,.7), transparent),
+      radial-gradient(1px 1px at 22% 88%, rgba(255,111,191,.6), transparent),
+      radial-gradient(1px 1px at 82% 78%, rgba(245,200,96,.6), transparent),
+      radial-gradient(1px 1px at 50% 8%, rgba(176,140,255,.6), transparent);
+  }
+  .bowl-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    color: var(--berry-light);
+    text-align: center;
+    margin: 0 0 6px;
+    opacity: .8;
+  }
+  .bowl-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: 26px;
+    line-height: 1.05;
+    text-align: center;
+    color: var(--gold-soft);
+    margin: 0 0 18px;
+    text-shadow: 0 0 14px rgba(245,200,96,.35);
+    letter-spacing: .04em;
+  }
+  .bowl-title .icon { display: block; font-size: 18px; margin-bottom: 6px; }
+
+  /* The orb bowl illustration — pure CSS */
+  .orb-stage {
+    position: relative;
+    height: 180px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .bowl {
+    position: relative;
+    width: 220px;
+    height: 130px;
+    background:
+      linear-gradient(180deg, #1a1340 0%, #0a071a 100%);
+    border: 2px solid #3a2880;
+    border-radius: 0 0 110px 110px / 0 0 70px 70px;
+    box-shadow:
+      inset 0 6px 18px rgba(176,140,255,.2),
+      inset 0 -10px 30px rgba(0,0,0,.6),
+      0 0 24px rgba(106,61,240,.4);
+    overflow: hidden;
+  }
+  .bowl::before {
+    content: "";
+    position: absolute;
+    top: 8px; left: 8px;
+    width: 30px; height: 8px;
+    background: rgba(176,140,255,.25);
+    border-radius: 50%;
+    filter: blur(2px);
+  }
+  /* runic etching */
+  .bowl::after {
+    content: "ᚱᚢ ᚠᛟ ᚲᚨ";
+    position: absolute;
+    bottom: 18px;
+    left: 0; right: 0;
+    text-align: center;
+    color: var(--berry);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    opacity: .5;
+    text-shadow: 0 0 6px var(--berry);
+  }
+  .orbs {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 90px;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #b08cff, #4a2bd0 60%, #1a0a5a 100%);
+    box-shadow:
+      0 0 8px rgba(176,140,255,.7),
+      inset -2px -3px 4px rgba(0,0,0,.4),
+      inset 2px 2px 3px rgba(255,255,255,.3);
+    animation: bob 4s ease-in-out infinite;
+  }
+  .orb.gold {
+    background: radial-gradient(circle at 30% 30%, #ffe091, #c89a30 60%, #5a3a08 100%);
+    box-shadow: 0 0 10px rgba(245,200,96,.7), inset -2px -3px 4px rgba(0,0,0,.4), inset 2px 2px 3px rgba(255,255,255,.4);
+  }
+  .orb.pink { background: radial-gradient(circle at 30% 30%, #ffb8dd, #c93f8a 60%, #5a0e3a 100%); box-shadow: 0 0 10px rgba(255,111,191,.6), inset -2px -3px 4px rgba(0,0,0,.4), inset 2px 2px 3px rgba(255,255,255,.4); }
+  /* hand-place */
+  .orb:nth-child(1) { width: 28px; height: 28px; left: 18px; bottom: 6px; animation-delay: 0s; }
+  .orb:nth-child(2) { width: 24px; height: 24px; left: 50px; bottom: 30px; animation-delay: -.5s; }
+  .orb:nth-child(3) { width: 32px; height: 32px; left: 78px; bottom: 4px; animation-delay: -1s; }
+  .orb:nth-child(4) { width: 22px; height: 22px; left: 112px; bottom: 32px; animation-delay: -1.5s; }
+  .orb:nth-child(5) { width: 30px; height: 30px; left: 138px; bottom: 8px; animation-delay: -2s; }
+  .orb:nth-child(6) { width: 22px; height: 22px; left: 168px; bottom: 28px; animation-delay: -2.5s; }
+  .orb:nth-child(7) { width: 18px; height: 18px; left: 32px; bottom: 50px; animation-delay: -3s; }
+  .orb:nth-child(8) { width: 16px; height: 16px; left: 92px; bottom: 50px; animation-delay: -1.2s; }
+  .orb:nth-child(9) { width: 18px; height: 18px; left: 152px; bottom: 50px; animation-delay: -2.7s; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .glow-aura {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 60px;
+    background: radial-gradient(ellipse, rgba(176,140,255,.35) 0%, transparent 65%);
+    filter: blur(8px);
+    z-index: -1;
+    animation: pulse-aura 3s ease-in-out infinite;
+  }
+  @keyframes pulse-aura {
+    0%, 100% { opacity: .5; }
+    50% { opacity: 1; }
+  }
+  .steam {
+    position: absolute;
+    bottom: 100px;
+    width: 6px;
+    height: 30px;
+    background: linear-gradient(180deg, transparent, rgba(176,140,255,.5), transparent);
+    border-radius: 50%;
+    filter: blur(3px);
+    animation: rise 3s ease-in infinite;
+  }
+  .steam.s1 { left: calc(50% - 30px); animation-delay: 0s; }
+  .steam.s2 { left: calc(50% + 4px); animation-delay: -1s; }
+  .steam.s3 { left: calc(50% + 28px); animation-delay: -2s; }
+  @keyframes rise {
+    0% { transform: translateY(20px) scale(.6); opacity: 0; }
+    50% { opacity: .8; }
+    100% { transform: translateY(-30px) scale(1.4); opacity: 0; }
+  }
+
+  .bowl-desc {
+    font-family: 'Crimson Text', serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: .9;
+    margin: 0 0 16px;
+  }
+  .bowl-desc .em {
+    color: var(--gold-soft);
+    font-weight: 600;
+    font-style: italic;
+  }
+  .bowl-desc .berry {
+    color: var(--berry-light);
+    font-weight: 600;
+  }
+  .bowl-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    border-top: 1px dashed rgba(245,200,96,.3);
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+  .bowl-tag span { display: block; font-style: italic; font-family: 'Crimson Text', serif; letter-spacing: .04em; text-transform: none; color: var(--ink-dim); margin-top: 6px; font-size: 13px; }
+
+  .bowl-stat {
+    display: flex;
+    justify-content: space-around;
+    margin: 14px 0 18px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(122,77,255,.2);
+    border-bottom: 1px solid rgba(122,77,255,.2);
+  }
+  .bowl-stat div {
+    text-align: center;
+  }
+  .bowl-stat strong {
+    display: block;
+    font-family: 'Cinzel', serif;
+    color: var(--gold-soft);
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .bowl-stat small {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* Bunny mascots — small floating buddies near header */
+  .mascot {
+    position: absolute;
+    width: 110px;
+    image-rendering: pixelated;
+    opacity: .95;
+    filter: drop-shadow(0 0 16px rgba(122,77,255,.4));
+    animation: bob 5s ease-in-out infinite;
+    z-index: 10;
+  }
+  .mascot.left { left: -60px; top: 38%; transform: rotate(-6deg); }
+  .mascot.right { right: -60px; top: 42%; transform: rotate(8deg); animation-delay: -2s; }
+
+  body[data-vibe="cozy"] { filter: saturate(.85) brightness(1.05); }
+  body[data-vibe="chaos"] { filter: saturate(1.35) contrast(1.08); }
+  body[data-vibe="chaos"] .card { box-shadow: inset 0 1px 0 rgba(176,140,255,.12), 0 10px 28px rgba(255,80,180,.18), 0 0 24px rgba(122,77,255,.25); }
+  body[data-vibe="cozy"] .card { box-shadow: inset 0 1px 0 rgba(255,224,145,.08), 0 8px 24px rgba(0,0,0,.35); }
+  @keyframes jitter {
+    0%,100% { transform: translateY(-4px) rotate(0); }
+    50% { transform: translateY(-5px) rotate(.5deg); }
+  }
+  body[data-vibe="chaos"] .card:hover { animation: jitter .35s ease-in-out infinite; }
+
+  /* Foot */
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(122,77,255,.15);
+    color: #c9b8ff;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    width: 100%;
+    max-width: 880px;
+  }
+  footer .heart { color: var(--crimson); }
+
+  @media (max-width: 768px) {
+    .page { flex-direction: column; align-items: stretch; padding: 12px 16px 60px; gap: 24px; }
+    aside.sperm-bowl {
+      position: static;
+      top: auto;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      flex-shrink: 1;
+      order: 2;
+    }
+    .menu-col { order: 1; align-items: stretch; width: 100%; }
+    /* Move sperm panel between header and first chapter via flex order on its parent's children */
+    header { padding: 8px 0 12px; }
+    .grid { grid-template-columns: 1fr !important; gap: 16px; max-width: 100%; }
+    .chapter { padding: 12px 0 8px; max-width: 100%; }
+    .chapter-name { font-size: 22px; }
+    .chapter-label::before, .chapter-label::after { width: 40px; }
+    .header-rule { width: 90%; }
+    h1.title { font-size: clamp(36px, 11vw, 64px); padding-left: 24px; padding-right: 24px; }
+    .crest { font-size: 9px; letter-spacing: .35em; }
+    .crest::before, .crest::after { width: 24px; }
+    .subtitle { font-size: 13px; letter-spacing: .4em; }
+    .tagline { font-size: 15px; padding: 0 8px; }
+    .item-action { font-size: 14px; }
+    .item-name { font-size: 16px; }
+    .mascot { width: 56px; opacity: .8; }
+    .mascot.left { left: -10px; top: 30%; }
+    .mascot.right { right: -10px; top: 34%; }
+    .bowl-title { font-size: 22px; }
+    .bits-badge { font-size: 12px; padding: 6px 11px; }
+    .bits-badge .num { font-size: 14px; }
+  }
+  @media (max-width: 420px) {
+    .mascot { display: none; }
+    h1.title { font-size: clamp(32px, 10vw, 52px); padding-left: 12px; padding-right: 12px; }
+  }
+  @media (max-width: 1100px) and (min-width: 769px) {
+    .page { flex-direction: column; align-items: center; padding: 16px 24px 60px; }
+    aside.sperm-bowl { position: static; width: 100%; max-width: 880px; margin: 0; flex-shrink: 1; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .mascot { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deco" id="deco"></div>
+
+<div class="page">
+
+  <div class="menu-col">
+
+  <header>
+    <img src="images/Heart_Protector_Bunny.png" class="mascot left" alt="" />
+    <img src="images/Blue_Bunny.png" class="mascot right" alt="" />
+    <div class="crest">★ BlueberryVibezz Cursed Café ★</div>
+    <h1 class="title">Berry&nbsp;Café</h1>
+    <p class="subtitle">Bits Menu</p>
+    <div class="header-rule"></div>
+    <p class="tagline">A <span class="accent">cursed cozy</span> pixel café — every bit you spend pulls a string. Order at your own peril.</p>
+  </header>
+
+  <!-- CHAPTER I -->
+  <section class="chapter">
+    <div class="chapter-label">✦ Chapter I ✦</div>
+    <div class="chapter-name">Small Sips</div>
+    <div class="chapter-range">— 25 to 300 bits —</div>
+  </section>
+
+  <section class="grid">
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">25</span> BITS</div>
+      <div class="img-wrap"><img src="images/Berry_Latte.png" alt="Berry Grey latte"></div>
+      <h3 class="item-name">Berry Grey</h3>
+      <p class="item-action">Make me read your username like a boxing match announcement.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">50</span> BITS</div>
+      <div class="img-wrap"><img src="images/Blueberry_Milk.png" alt="Blueberry milk"></div>
+      <h3 class="item-name">Blueberry Milk</h3>
+      <p class="item-action">Make me do a 20 second POV diary monologue about you.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">150</span> BITS</div>
+      <div class="img-wrap"><img src="images/Streamer_Tears.png" alt="Streamer's tears bottle"></div>
+      <h3 class="item-name">Streamer's Tears</h3>
+      <p class="item-action">Make me chug the whole water bottle.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">300</span> BITS</div>
+      <div class="img-wrap"><img src="images/Zen_Berry_Brew.png" alt="Zen berry brew"></div>
+      <h3 class="item-name">Zen Berry Brew</h3>
+      <p class="item-action">Make me put on a facemask.</p>
+    </a>
+  </section>
+
+  <!-- CHAPTER II -->
+  <section class="chapter">
+    <div class="chapter-label">✦ Chapter II ✦</div>
+    <div class="chapter-name">Getting Weird</div>
+    <div class="chapter-range">— 1500 to 2500 bits —</div>
+  </section>
+
+  <section class="grid">
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">1500</span> BITS</div>
+      <div class="img-wrap"><img src="images/Panic_shot.png" alt="Panic shot"></div>
+      <h3 class="item-name">Panic Shot</h3>
+      <p class="item-action">Make me eat a super sour lemon.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">2500</span> BITS</div>
+      <div class="img-wrap"><img src="images/Unhinged_Berry_Soda.png" alt="Unhinged berry soda"></div>
+      <h3 class="item-name">Unhinged Berry Soda</h3>
+      <p class="item-action">Make me spin the penalty wheel twice and take a shot.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">2500</span> BITS</div>
+      <div class="img-wrap"><img src="images/Spicy_Berry_Potion.png" alt="Spicy berry potion"></div>
+      <h3 class="item-name">Spicy Berry Potion</h3>
+      <p class="item-action">Make me eat something super spicy.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">2500</span> BITS</div>
+      <div class="img-wrap"><img src="images/Midnight_Berry_Refresher.png" alt="Midnight berry refresher"></div>
+      <h3 class="item-name">Midnight Berry Refresher</h3>
+      <p class="item-action">Make me go lights off and whisper ASMR for 5 minutes.</p>
+    </a>
+  </section>
+
+  <!-- CHAPTER III -->
+  <section class="chapter">
+    <div class="chapter-label">✦ Chapter III ✦</div>
+    <div class="chapter-name">Full Chaos</div>
+    <div class="chapter-range">— 5000 bits —</div>
+  </section>
+
+  <section class="grid">
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">5000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Berry_Deluxe_Cocoa.png" alt="Deluxe berry cocoa"></div>
+      <h3 class="item-name">Deluxe Berry Cocoa</h3>
+      <p class="item-action">Make me take whipped cream to the face.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">5000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Blue_Frenzy.png" alt="Blue frenzy energy can"></div>
+      <h3 class="item-name">Blue Frenzy</h3>
+      <p class="item-action">Make me do the full Gangnam Style dance.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">5000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Berry_Meltdown.png" alt="Berry meltdown slushie"></div>
+      <h3 class="item-name">Berry Meltdown</h3>
+      <p class="item-action">Make me pour water on my head and stare into the camera.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">5000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Blueberry_Bliss_Cheesecake.png" alt="Blueberry bliss cheesecake"></div>
+      <h3 class="item-name">Blueberry Bliss Cheesecake</h3>
+      <p class="item-action">Make me wear the cat suit with drawn whiskers and a voice changer for the rest of stream.</p>
+    </a>
+  </section>
+
+  <!-- CHAPTER IV -->
+  <section class="chapter">
+    <div class="chapter-label">✦ Chapter IV ✦</div>
+    <div class="chapter-name">Endgame</div>
+    <div class="chapter-range">— 10 000 bits —</div>
+  </section>
+
+  <section class="grid">
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">10000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Berry_Overstack.png" alt="Berry overstack pancakes"></div>
+      <h3 class="item-name">Berry Overstack</h3>
+      <p class="item-action">Make me go full chaos mode — lights off, LEDs on, entire setup switched for the rest of stream.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">10000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Oni_Toast.png" alt="Oni toast"></div>
+      <h3 class="item-name">Oni Toast</h3>
+      <p class="item-action">Make me eat a huge spoon of super spicy sauce and read your chosen Wikipedia page out loud — no water until it's done.</p>
+    </a>
+    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
+      <div class="bits-badge"><span class="num">10000</span> BITS</div>
+      <div class="img-wrap"><img src="images/Cursed_Berry_Croissant.png" alt="Cursed berry croissant"></div>
+      <h3 class="item-name">Cursed Berry Croissant</h3>
+      <p class="item-action">Make me put on the Dino suit and dance.</p>
+    </a>
+  </section>
+
+  <footer>
+    ✦ Berry Fam · Stay Cursed · Stay Cozy ✦ <span class="heart">♥</span>
+  </footer>
+
+  </div><!-- /.menu-col -->
+
+  <aside class="sperm-bowl" aria-label="Berry Sperm Bowl — 6 month subscriber legacy">
+    <div class="bowl-card">
+      <p class="bowl-eyebrow">✦ 6 Month Legacy ✦</p>
+      <h2 class="bowl-title"><span class="icon">🫧</span>Berry Sperm Bowl</h2>
+      <div class="orb-stage">
+        <div class="steam s1"></div>
+        <div class="steam s2"></div>
+        <div class="steam s3"></div>
+        <div class="glow-aura"></div>
+        <div class="bowl">
+          <div class="orbs">
+            <div class="orb"></div>
+            <div class="orb gold"></div>
+            <div class="orb"></div>
+            <div class="orb pink"></div>
+            <div class="orb gold"></div>
+            <div class="orb"></div>
+            <div class="orb pink"></div>
+            <div class="orb"></div>
+            <div class="orb gold"></div>
+          </div>
+        </div>
+      </div>
+      <p class="bowl-desc">
+        An unhinged bowl of blueberries, each containing a member of the Berry Family. You've been here for <span class="em">6 months</span> — and that means something. Subscribe for <span class="em">6 months</span> and earn your place in the <span class="berry">Berry Sperm Bowl</span>. A bowl full of blueberries, each carrying a name that belongs here.
+      </p>
+      <p class="bowl-desc">
+        After 6 months, <span class="em">YOU</span> get to pick your blueberry — then <span class="em">Blueberryvibezz</span> writes your name on it and drops it into the bowl, <span class="berry">live on stream</span>. Your name. Your blueberry. In the bowl forever.
+      </p>
+      <div class="bowl-tag">
+        ✦ Earn Your Blueberry ✦
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "vibe": "chaos",
+    "density": "compact",
+    "sparkleStorm": 120
+  }/*EDITMODE-END*/;
+
+  function applyVibe(v) {
+    document.body.dataset.vibe = v;
+  }
+  function applyDensity(d) {
+    const root = document.documentElement;
+    if (d === 'compact') {
+      root.style.setProperty('--card-pad', '12px 14px 14px');
+      root.style.setProperty('--grid-gap', '14px');
+      root.style.setProperty('--chapter-pad', '10px 0');
+    } else if (d === 'spacious') {
+      root.style.setProperty('--card-pad', '22px 24px 26px');
+      root.style.setProperty('--grid-gap', '32px');
+      root.style.setProperty('--chapter-pad', '32px 0 28px');
+    } else {
+      root.style.setProperty('--card-pad', '16px 18px 18px');
+      root.style.setProperty('--grid-gap', '22px');
+      root.style.setProperty('--chapter-pad', '18px 0');
+    }
+  }
+  function applySparkles(n) {
+    const deco = document.getElementById('deco');
+    if (!deco) return;
+    deco.innerHTML = '';
+    const imgs = [
+      'images/Berry_Latte.png',
+      'images/Blueberry_Milk.png',
+      'images/Streamer_Tears.png',
+      'images/Zen_Berry_Brew.png',
+      'images/Panic_shot.png',
+      'images/Unhinged_Berry_Soda.png',
+      'images/Spicy_Berry_Potion.png',
+      'images/Midnight_Berry_Refresher.png',
+      'images/Berry_Deluxe_Cocoa.png',
+      'images/Blue_Frenzy.png',
+      'images/Berry_Meltdown.png',
+      'images/Blueberry_Bliss_Cheesecake.png',
+      'images/Berry_Overstack.png',
+      'images/Oni_Toast.png',
+      'images/Cursed_Berry_Croissant.png',
+    ];
+    const COUNT = Math.max(28, Math.round(n * 0.25));
+    for (let i = 0; i < COUNT; i++) {
+      const el = document.createElement('img');
+      el.className = 'float-img';
+      el.src = imgs[i % imgs.length];
+      el.alt = '';
+      const size = 60 + Math.random() * 30;
+      const dur = 15 + Math.random() * 20;
+      const delay = -Math.random() * dur;
+      const rot = (Math.random() * 40 - 20).toFixed(1);
+      const rotEnd = (Math.random() * 40 - 20).toFixed(1);
+      const op = (0.12 + Math.random() * 0.06).toFixed(2);
+      el.style.width = size + 'px';
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.top = (100 + Math.random() * 30) + '%';
+      el.style.animationDuration = dur + 's';
+      el.style.animationDelay = delay + 's';
+      el.style.setProperty('--rot', rot + 'deg');
+      el.style.setProperty('--rot-end', rotEnd + 'deg');
+      el.style.setProperty('--op', op);
+      deco.appendChild(el);
+    }
+  }
+
+  // Inject item-name watermark into each card image
+  function applyWatermarks() {
+    document.querySelectorAll('.card').forEach(card => {
+      const wrap = card.querySelector('.img-wrap');
+      const name = card.querySelector('.item-name');
+      if (!wrap || !name) return;
+      if (wrap.querySelector('.img-watermark')) return;
+      const wm = document.createElement('span');
+      wm.className = 'img-watermark';
+      wm.textContent = name.textContent;
+      wm.setAttribute('aria-hidden', 'true');
+      wrap.appendChild(wm);
+    });
+  }
+  applyWatermarks();
+
+  function App() {
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+    React.useEffect(() => { applyVibe(t.vibe); }, [t.vibe]);
+    React.useEffect(() => { applyDensity(t.density); }, [t.density]);
+    React.useEffect(() => { applySparkles(t.sparkleStorm); }, [t.sparkleStorm]);
+    return (
+      <TweaksPanel>
+        <TweakSection label="Café Vibe" />
+        <TweakRadio label="Mood" value={t.vibe}
+                    options={['cozy', 'cursed', 'chaos']}
+                    onChange={(v) => setTweak('vibe', v)} />
+        <TweakSection label="Layout" />
+        <TweakRadio label="Density" value={t.density}
+                    options={['compact', 'regular', 'spacious']}
+                    onChange={(v) => setTweak('density', v)} />
+        <TweakSection label="Atmosphere" />
+        <TweakSlider label="Sparkle storm" value={t.sparkleStorm}
+                     min={0} max={120} step={2} unit=" ☆"
+                     onChange={(v) => setTweak('sparkleStorm', v)} />
+      </TweaksPanel>
+    );
+  }
+
+  const mountTweaks = () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    ReactDOM.createRoot(el).render(<App />);
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountTweaks);
+  } else {
+    mountTweaks();
+  }
+</script>
+
+</body>
+</html>
