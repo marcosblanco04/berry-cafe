@@ -33,6 +33,10 @@
 
   * { box-sizing: border-box; }
 
+  html {
+    zoom: 0.88;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
@@ -42,6 +46,28 @@
     font-family: 'Crimson Text', serif;
     font-size: 17px;
     line-height: 1.55;
+  }
+
+  /* Side character art */
+  .side-char {
+    position: fixed;
+    bottom: 0;
+    z-index: 2;
+    pointer-events: none;
+    width: clamp(180px, 14vw, 260px);
+    opacity: 0.82;
+    filter: drop-shadow(0 0 28px rgba(106,61,240,.45));
+  }
+  .side-char.left  { left: 0; }
+  .side-char.right { right: 0; transform: scaleX(-1); }
+
+  /* Header logo banner */
+  .header-logo {
+    display: block;
+    margin: 0 auto 18px;
+    max-width: min(480px, 80%);
+    height: auto;
+    filter: drop-shadow(0 0 18px rgba(106,61,240,.5));
   }
 
   /* Starfield background */
@@ -114,9 +140,9 @@
   }
   @keyframes img-float {
     0%   { transform: translateY(0) rotate(var(--rot, 0deg)); opacity: 0; }
-    10%  { opacity: var(--op, 0.15); }
-    85%  { opacity: var(--op, 0.15); }
-    100% { transform: translateY(-115vh) rotate(var(--rot-end, 8deg)); opacity: 0; }
+    8%   { opacity: var(--op, 0.15); }
+    88%  { opacity: var(--op, 0.15); }
+    100% { transform: translateY(-145vh) rotate(var(--rot-end, 8deg)); opacity: 0; }
   }
 
   /* Layout */
@@ -179,8 +205,11 @@
     background-clip: text;
     color: transparent;
     text-shadow:
-      0 0 28px rgba(245,200,96,.32),
-      0 0 60px rgba(245,200,96,.18);
+      0 0 18px rgba(245,200,96,.9),
+      0 0 40px rgba(245,200,96,.7),
+      0 0 80px rgba(245,200,96,.45),
+      0 0 120px rgba(245,200,96,.25);
+    filter: drop-shadow(0 0 22px rgba(245,200,96,.6)) drop-shadow(0 0 60px rgba(255,160,30,.35));
     letter-spacing: .02em;
     position: relative;
     overflow: visible;
@@ -767,6 +796,9 @@
 
 <div class="deco" id="deco"></div>
 
+<img src="images/Char_Wings.png" class="side-char left" alt="" />
+<img src="images/Char_Mask.png" class="side-char right" alt="" />
+
 <div class="page">
 
   <div class="menu-col">
@@ -774,6 +806,7 @@
   <header>
     <img src="images/Heart_Protector_Bunny.png" class="mascot left" alt="" />
     <img src="images/Blue_Bunny.png" class="mascot right" alt="" />
+    <img src="images/Logo_Banner.png" class="header-logo" alt="BlueberryVibezz" />
     <div class="crest">★ BlueberryVibezz Cursed Café ★</div>
     <h1 class="title">Berry&nbsp;Café</h1>
     <p class="subtitle">Bits Menu</p>
@@ -941,10 +974,10 @@
         </div>
       </div>
       <p class="bowl-desc">
-        An unhinged bowl of blueberries, each containing a member of the Berry Family. You've been here for <span class="em">6 months</span> — and that means something. Subscribe for <span class="em">6 months</span> and earn your place in the <span class="berry">Berry Sperm Bowl</span>. A bowl full of blueberries, each carrying a name that belongs here.
+        You've been here for <span class="em">6 months</span> — and that means something. Subscribe for <span class="em">6 months</span> and earn your place in the <span class="berry">Berry Sperm Bowl</span>. An unhinged bowl full of unhinged blueberries, each carrying a name that belongs to the berry family.
       </p>
       <p class="bowl-desc">
-        After 6 months, <span class="em">YOU</span> get to pick your blueberry — then <span class="em">Blueberryvibezz</span> writes your name on it and drops it into the bowl, <span class="berry">live on stream</span>. Your name. Your blueberry. In the bowl forever.
+        After subscribing for <span class="em">6 months</span>, <span class="em">YOU</span> get to pick your blueberry — then <span class="em">Blueberryvibezz</span> writes your name on it and drops it into the bowl, <span class="berry">live on stream</span>. Your name. Your blueberry. In the bowl forever.
       </p>
       <div class="bowl-tag">
         ✦ Earn Your Blueberry ✦
@@ -1016,7 +1049,7 @@
       const op = (0.12 + Math.random() * 0.06).toFixed(2);
       el.style.width = size + 'px';
       el.style.left = (Math.random() * 100) + '%';
-      el.style.top = (100 + Math.random() * 30) + '%';
+      el.style.top = (100 + Math.random() * 5) + '%';
       el.style.animationDuration = dur + 's';
       el.style.animationDelay = delay + 's';
       el.style.setProperty('--rot', rot + 'deg');
