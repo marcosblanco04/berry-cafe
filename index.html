@@ -33,10 +33,6 @@
 
   * { box-sizing: border-box; }
 
-  html {
-    zoom: 0.88;
-  }
-
   html, body {
     margin: 0;
     padding: 0;
@@ -44,7 +40,7 @@
     background: var(--bg);
     color: var(--ink);
     font-family: 'Crimson Text', serif;
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.55;
   }
 
@@ -101,7 +97,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 0;
+    z-index: 3;
     pointer-events: none;
     overflow: hidden;
   }
@@ -147,9 +143,9 @@
 
   /* Layout */
   .page {
-    max-width: 1380px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 24px 48px 80px;
+    padding: 20px 40px 70px;
     display: flex;
     align-items: flex-start;
     gap: 48px;
@@ -195,7 +191,7 @@
   h1.title {
     font-family: 'Cinzel Decorative', serif;
     font-weight: 900;
-    font-size: clamp(44px, 6.2vw, 96px);
+    font-size: clamp(38px, 5.4vw, 84px);
     line-height: .95;
     margin: 0;
     padding-right: 60px;
