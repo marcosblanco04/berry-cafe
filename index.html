@@ -1,1112 +1,1113 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="sv">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Berry Café — Bits Menu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cinzel+Decorative:wght@700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Press+Start+2P&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlueberryVibezz — Sub Goals</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #08081a;
-    --bg-2: #0d0c25;
-    --panel: #110f2e;
-    --panel-2: #181537;
-    --border: #2b1f5a;
-    --border-glow: #6a3df0;
-    --gold: #f5c860;
-    --gold-deep: #b88a2a;
-    --gold-soft: #ffe091;
-    --berry: #7a4dff;
-    --berry-deep: #3d1f8a;
-    --berry-light: #b08cff;
-    --pink: #ff6fbf;
-    --crimson: #b8324d;
-    --ink: #d9d2ff;
-    --ink-dim: #8a82b8;
-    --ink-faint: #5a5380;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  * { box-sizing: border-box; }
+:root {
+  --bg:       #05040d;
+  --col-w:    580px;
+  --purple:   #7c3aed;
+  --purple-l: #c084fc;
+  --pink:     #f43f8a;
+  --gold:     #f5c842;
+  --red:      #e84040;
+  --white:    #f5f0ff;
+  --muted:    #9b8fb8;
+}
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    position: relative;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Crimson Text', serif;
-    font-size: 15px;
-    line-height: 1.55;
-  }
+html { scroll-behavior: smooth; }
 
-  /* Side character art */
-  .side-char {
-    position: fixed;
-    bottom: 0;
-    z-index: 2;
-    pointer-events: none;
-    width: clamp(180px, 14vw, 260px);
-    opacity: 0.82;
-    filter: drop-shadow(0 0 28px rgba(106,61,240,.45));
-  }
-  .side-char.left  { left: 0; }
-  .side-char.right { right: 0; transform: scaleX(-1); width: clamp(220px, 17vw, 320px); }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'EB Garamond', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: clip;
+}
 
-  @media (max-width: 768px) {
-    .side-char { display: none; }
-  }
+/* ── Stars ── */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(100,50,200,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(244,63,138,0.07) 0%, transparent 60%);
+}
+.stars canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-  /* Header logo banner */
-  .header-logo {
-    display: block;
-    margin: 0 auto 18px;
-    max-width: min(480px, 80%);
-    height: auto;
-    filter: drop-shadow(0 0 18px rgba(106,61,240,.5));
-  }
+/* ── Layout ── */
+.outer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding: 0 0 100px;
+  overflow: visible;
+}
 
-  /* Starfield background */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(1px 1px at 20% 30%, #b08cff 50%, transparent 100%),
-      radial-gradient(1px 1px at 70% 80%, #6f5dd6 50%, transparent 100%),
-      radial-gradient(1px 1px at 40% 60%, #f5c860 50%, transparent 100%),
-      radial-gradient(1px 1px at 90% 20%, #b08cff 50%, transparent 100%),
-      radial-gradient(1px 1px at 10% 90%, #ff6fbf 50%, transparent 100%),
-      radial-gradient(1px 1px at 55% 15%, #b08cff 50%, transparent 100%),
-      radial-gradient(1px 1px at 85% 55%, #6f5dd6 50%, transparent 100%),
-      radial-gradient(1px 1px at 30% 75%, #f5c860 50%, transparent 100%),
-      radial-gradient(2px 2px at 25% 45%, rgba(176,140,255,.6) 50%, transparent 100%),
-      radial-gradient(2px 2px at 75% 35%, rgba(245,200,96,.5) 50%, transparent 100%),
-      radial-gradient(circle at 15% 15%, rgba(106,61,240,.08), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(184,50,77,.06), transparent 45%),
-      linear-gradient(180deg, #08081a 0%, #0a0820 50%, #08081a 100%);
-    background-size: 100% 100%;
-    z-index: -2;
-    pointer-events: none;
-  }
+/* ── Side characters ── */
+.char-wrap {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
+  overflow: visible;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+.char-right { gap: 32px; }
+.char-wrap img {
+  width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  object-position: bottom center;
+}
+.char-left img  { filter: drop-shadow(0 0 28px rgba(192,132,252,0.35)); transform: scaleX(-1); }
+.char-right img {
+  filter: drop-shadow(0 0 28px rgba(232,64,64,0.35));
+  width: 130%;
+  max-height: 54vh;
+  object-position: center center;
+  margin-top: 24px;
+}
 
-  /* Floating decorations layer */
-  .deco {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 3;
-    pointer-events: none;
-    overflow: hidden;
-  }
+.bunny-side-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bunny-side {
+  width: 180px;
+  object-fit: contain;
+  animation: bunny-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(192,132,252,0.4));
+}
+.char-right .bunny-side { width: 210px; animation-delay: 2s; margin-left: 40px; }
+.bunny-side-wrap .sparkle {
+  position: absolute;
+  pointer-events: none;
+  animation: sparkle-fade 2s ease-in-out infinite;
+  font-size: 13px;
+  color: #c084fc;
+  z-index: 2;
+}
+.bunny-side-wrap .sparkle:nth-child(1) { top: 10%; left: -10px;  animation-delay: 0s; }
+.bunny-side-wrap .sparkle:nth-child(2) { top: 30%; right: -8px;  animation-delay: 0.6s; }
+.bunny-side-wrap .sparkle:nth-child(3) { top: 5%;  left: 42%;    animation-delay: 1.1s; }
+.bunny-side-wrap .sparkle:nth-child(4) { top: 60%; left: -10px;  animation-delay: 0.3s; }
+.bunny-side-wrap .sparkle:nth-child(5) { top: 70%; right: -8px;  animation-delay: 0.9s; }
+@keyframes sparkle-fade {
+  0%   { opacity: 0;   transform: scale(0.5) rotate(0deg); }
+  40%  { opacity: 1;   transform: scale(1.2) rotate(20deg); }
+  70%  { opacity: 0.8; transform: scale(1)   rotate(10deg); }
+  100% { opacity: 0;   transform: scale(0.5) rotate(30deg); }
+}
+@keyframes bunny-float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-9px); }
+  100% { transform: translateY(0px); }
+}
 
-  /* Watermark item-name overlay on card images */
-  .img-wrap .img-watermark {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: 'Cinzel Decorative', serif;
-    font-weight: 700;
-    color: var(--gold, #f5c860);
-    text-shadow: 0 0 8px rgba(245,200,96,.35);
-    letter-spacing: .04em;
-    font-size: clamp(14px, 2vw, 22px);
-    line-height: 1.1;
-    padding: 0 8%;
-    opacity: .1;
-    pointer-events: none;
-    z-index: 3;
-    text-transform: uppercase;
-    mix-blend-mode: screen;
-  }
-  .page, header, .menu-col, aside.sperm-bowl, .tweaks-panel, .chapter, .grid, footer { position: relative; z-index: 1; }
+/* ── Center column ── */
+.center-col {
+  width: var(--col-w);
+  flex-shrink: 0;
+  padding: 0 20px;
+}
 
-  /* Floating menu-item images */
-  .deco .float-img {
-    position: absolute;
-    image-rendering: pixelated;
-    filter: drop-shadow(0 4px 14px rgba(106,61,240,.35));
-    animation: img-float linear infinite;
-    will-change: transform, opacity;
-  }
-  @keyframes img-float {
-    0%   { transform: translateY(0) rotate(var(--rot, 0deg)); opacity: 0; }
-    8%   { opacity: var(--op, 0.15); }
-    88%  { opacity: var(--op, 0.15); }
-    100% { transform: translateY(-145vh) rotate(var(--rot-end, 8deg)); opacity: 0; }
-  }
+/* ── LOGO ── */
+.logo-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 0;
+}
+.logo-wrap img {
+  width: 520px;
+  max-width: 100%;
+  filter: drop-shadow(0 0 20px rgba(192,132,252,0.35));
+}
 
-  /* Layout */
-  .page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px 40px 70px;
-    display: flex;
-    align-items: flex-start;
-    gap: 48px;
-    position: relative;
-  }
-  .menu-col {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+/* ── Header ── */
+.header {
+  text-align: center;
+  padding: 6px 0 22px;
+}
 
-  /* Header */
-  header {
-    text-align: center;
-    padding: 16px 0 24px;
-    position: relative;
-    width: 100%;
-    max-width: 880px;
-    margin: 0 auto;
-    overflow: visible;
-  }
-  .crest {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    color: var(--berry-light);
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: .55em;
-    text-transform: uppercase;
-    margin-bottom: 22px;
-    opacity: .8;
-  }
-  .crest::before, .crest::after {
-    content: "";
-    width: 60px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--berry-light), transparent);
-  }
-  h1.title {
-    font-family: 'Cinzel Decorative', serif;
-    font-weight: 900;
-    font-size: clamp(38px, 5.4vw, 84px);
-    line-height: .95;
-    margin: 0;
-    padding-right: 60px;
-    padding-left: 60px;
-    background: linear-gradient(180deg, #ffe091 0%, #f5c860 45%, #b88a2a 75%, #6b4a14 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow:
-      0 0 20px rgba(245,200,96,.5),
-      0 0 55px rgba(245,200,96,.22);
-    filter: drop-shadow(0 0 12px rgba(245,200,96,.35));
-    letter-spacing: .02em;
-    position: relative;
-    overflow: visible;
-    white-space: nowrap;
-  }
-  h1.title::before {
-    content: "✦";
-    position: absolute;
-    left: 8%;
-    top: 10%;
-    color: var(--gold-soft);
-    font-size: .25em;
-    text-shadow: 0 0 10px var(--gold);
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  h1.title::after {
-    content: "✦";
-    position: absolute;
-    right: 10%;
-    top: 18%;
-    color: var(--gold-soft);
-    font-size: .2em;
-    text-shadow: 0 0 10px var(--gold);
-    animation: twinkle 3s ease-in-out infinite .8s;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: .4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
-  }
-  .subtitle {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: .55em;
-    text-transform: uppercase;
-    color: #e0d0ff;
-    margin: 14px 0 0;
-  }
-  .header-rule {
-    width: 60%;
-    margin: 18px auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
-    opacity: .5;
-  }
-  .tagline {
-    font-family: 'Crimson Text', serif;
-    font-style: italic;
-    color: #e0d0ff;
-    font-size: 19px;
-    margin: 14px 0 0;
-    letter-spacing: .04em;
-    opacity: 1;
-  }
-  .tagline .accent { color: var(--gold-soft); font-weight: 600; font-style: normal; }
+.main-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 2px;
+  color: var(--white);
+}
 
-  /* Chapter divider */
-  .chapter {
-    text-align: center;
-    padding: var(--chapter-pad, 18px 0);
-    width: 100%;
-    max-width: 880px;
-  }
-  .chapter:first-of-type { padding-top: 8px; }
-  .chapter-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 18px;
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: .5em;
-    text-transform: uppercase;
-    color: #c9b3ff;
-    text-shadow: 0 0 10px rgba(176,140,255,.5);
-  }
-  .chapter-label::before, .chapter-label::after {
-    content: "";
-    width: 120px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
-  }
-  .chapter-name {
-    font-family: 'Cinzel Decorative', serif;
-    font-weight: 700;
-    font-size: 28px;
-    letter-spacing: .14em;
-    color: var(--gold-soft);
-    margin: 14px 0 6px;
-    text-shadow: 0 0 18px rgba(245,200,96,.3);
-  }
-  .chapter-range {
-    font-family: 'Crimson Text', serif;
-    font-style: italic;
-    color: #c9b8ff;
-    font-size: 15px;
-    letter-spacing: .08em;
-  }
+.main-title .celebration {
+  display: block;
+  font-size: 58px;
+  color: var(--gold);
+  letter-spacing: 4px;
+  text-shadow:
+    0 0 20px rgba(245,200,66,1),
+    0 0 50px rgba(245,200,66,0.6),
+    0 0 90px rgba(245,200,66,0.3),
+    3px 3px 0 #5a3a00,
+    -1px -1px 0 #8a5c00;
+  animation: hdr-pulse 3.5s ease-in-out infinite alternate;
+}
+@keyframes hdr-pulse {
+  from { text-shadow: 0 0 20px rgba(245,200,66,1), 0 0 50px rgba(245,200,66,0.6), 0 0 90px rgba(245,200,66,0.3), 3px 3px 0 #5a3a00; }
+  to   { text-shadow: 0 0 30px rgba(245,200,66,1), 0 0 70px rgba(245,200,66,0.8), 0 0 120px rgba(245,200,66,0.4), 3px 3px 0 #5a3a00; }
+}
 
-  /* Card grid */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--grid-gap, 22px);
-    width: 100%;
-    max-width: 880px;
-    margin: 0 auto;
-  }
+.main-title .sub-goals-word {
+  display: block;
+  font-size: 18px;
+  letter-spacing: 14px;
+  color: rgba(220,200,255,0.85);
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(192,132,252,0.6);
+  margin-top: 6px;
+}
 
-  .card {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    position: relative;
-    background:
-      linear-gradient(160deg, rgba(122,77,255,.06) 0%, transparent 50%),
-      linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: var(--card-pad, 16px 18px 18px);
-    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-    box-shadow:
-      inset 0 1px 0 rgba(176,140,255,.06),
-      0 8px 24px rgba(0,0,0,.4);
-    overflow: hidden;
-  }
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(122,77,255,.5), rgba(43,31,90,.2) 40%, rgba(245,200,96,.25));
-    -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    opacity: .8;
-  }
-  .card::after {
-    /* corner sparkles */
-    content: "✦";
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    font-size: 10px;
-    color: var(--berry-light);
-    opacity: .5;
-    text-shadow: 0 0 6px currentColor;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-glow);
-    filter: brightness(1.12);
-    box-shadow:
-      inset 0 1px 0 rgba(176,140,255,.12),
-      0 16px 36px rgba(106,61,240,.4),
-      0 0 0 1px rgba(176,140,255,.25),
-      0 0 28px rgba(176,140,255,.25);
-  }
-  .card:focus-visible {
-    outline: 2px solid var(--berry-light);
-    outline-offset: 4px;
-  }
+.header-rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-rule .line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192,132,252,0.5), transparent);
+}
+.header-rule .rune { color: var(--purple-l); font-size: 14px; opacity: 0.7; }
 
-  .img-wrap {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    background:
-      radial-gradient(circle at 50% 60%, rgba(122,77,255,.18), transparent 60%),
-      linear-gradient(180deg, #0a0820 0%, #14102e 100%);
-    border-radius: 10px;
-    border: 1px solid rgba(122,77,255,.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    overflow: hidden;
-  }
-  .img-wrap::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(1px 1px at 15% 25%, rgba(245,200,96,.5), transparent),
-      radial-gradient(1px 1px at 85% 70%, rgba(176,140,255,.5), transparent),
-      radial-gradient(1px 1px at 30% 80%, rgba(255,111,191,.5), transparent),
-      radial-gradient(1px 1px at 70% 20%, rgba(245,200,96,.5), transparent);
-  }
-  .img-wrap img {
-    position: relative;
-    width: 88%;
-    height: 88%;
-    object-fit: contain;
-    image-rendering: pixelated;
-    filter: drop-shadow(0 4px 14px rgba(0,0,0,.5));
-  }
+/* ── Section header ── */
+.section-head {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--purple-l);
+  text-align: center;
+  margin: 52px 0 0;
+  opacity: 0.55;
+}
 
-  .bits-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-family: 'Cinzel', serif;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: .12em;
-    color: #18130a;
-    background: linear-gradient(180deg, #FFE066 0%, #FFD700 55%, #E5B800 100%);
-    padding: 8px 14px;
-    border-radius: 20px;
-    border: 1.5px solid #FFE066;
-    box-shadow:
-      0 0 20px rgba(255,215,0,.55),
-      inset 0 1px 0 rgba(255,255,255,.65),
-      inset 0 -2px 0 rgba(140,90,0,.35);
-    text-shadow: 0 1px 0 rgba(255,235,150,.7);
-    z-index: 2;
-    white-space: nowrap;
-  }
-  .bits-badge .num { font-size: 17px; font-weight: 900; }
+/* ── Quest list ── */
+.quest-list {
+  position: relative;
+  margin-top: 12px;
+}
 
-  .item-name {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: #FFE091;
-    margin: 0 0 6px;
-    text-shadow: 0 0 12px rgba(245,200,96,.25);
-  }
-  .item-action {
-    font-family: 'Crimson Text', serif;
-    font-style: italic;
-    font-size: 17px;
-    color: #c9b8ff;
-    opacity: 1;
-    line-height: 1.55;
-    margin: 0;
-  }
-  .item-action::before {
-    content: "❝ ";
-    color: var(--berry-light);
-    font-style: normal;
-    opacity: .6;
-  }
-  .item-action::after {
-    content: " ❞";
-    color: var(--berry-light);
-    font-style: normal;
-    opacity: .6;
-  }
+.quest-list::before {
+  content: '';
+  position: absolute;
+  left: 33px;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(192,132,252,0.28) 8%,
+    rgba(192,132,252,0.16) 92%,
+    transparent 100%
+  );
+  z-index: 0;
+  mask-image: linear-gradient(180deg,
+    transparent 0px,
+    black 33px,
+    black calc(100% - 33px),
+    transparent 100%
+  );
+}
 
-  /* Sticky right panel */
-  aside.sperm-bowl {
-    position: sticky;
-    top: 20px;
-    align-self: flex-start;
-    width: 280px;
-    flex-shrink: 0;
-    margin-left: 80px;
-    margin-right: -40px;
-    margin-top: 280px;
-  }
-  .bowl-card {
-    position: relative;
-    background:
-      radial-gradient(circle at 50% 0%, rgba(122,77,255,.18), transparent 55%),
-      linear-gradient(180deg, #160f3c 0%, #0c0824 100%);
-    border: 1px solid rgba(122,77,255,.45);
-    border-radius: 16px;
-    padding: 26px 22px 28px;
-    box-shadow:
-      0 0 0 1px rgba(176,140,255,.08),
-      0 0 28px rgba(106,61,240,.25),
-      0 14px 40px rgba(0,0,0,.5),
-      inset 0 1px 0 rgba(176,140,255,.1);
-    overflow: hidden;
-  }
-  .bowl-card::before {
-    /* hanging café sign nails */
-    content: "";
-    position: absolute;
-    top: 8px; left: 14px; right: 14px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(245,200,96,.4), transparent);
-  }
-  .bowl-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    pointer-events: none;
-    background:
-      radial-gradient(1px 1px at 12% 18%, rgba(245,200,96,.7), transparent),
-      radial-gradient(1px 1px at 88% 22%, rgba(176,140,255,.7), transparent),
-      radial-gradient(1px 1px at 22% 88%, rgba(255,111,191,.6), transparent),
-      radial-gradient(1px 1px at 82% 78%, rgba(245,200,96,.6), transparent),
-      radial-gradient(1px 1px at 50% 8%, rgba(176,140,255,.6), transparent);
-  }
-  .bowl-eyebrow {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: .5em;
-    text-transform: uppercase;
-    color: var(--berry-light);
-    text-align: center;
-    margin: 0 0 6px;
-    opacity: .8;
-  }
-  .bowl-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-weight: 900;
-    font-size: 26px;
-    line-height: 1.05;
-    text-align: center;
-    color: var(--gold-soft);
-    margin: 0 0 18px;
-    text-shadow: 0 0 14px rgba(245,200,96,.35);
-    letter-spacing: .04em;
-  }
-  .bowl-title .icon { display: block; font-size: 18px; margin-bottom: 6px; }
+/* ── Goal row ── */
+.goal {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 18px 0;
+  position: relative;
+}
+.goal:hover .goal-body { transform: translateX(3px); }
+.goal-body { transition: transform 0.2s ease; }
 
-  /* The orb bowl illustration — pure CSS */
-  .orb-stage {
-    position: relative;
-    height: 180px;
-    margin: 0 auto 18px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .bowl {
-    position: relative;
-    width: 220px;
-    height: 130px;
-    background:
-      linear-gradient(180deg, #1a1340 0%, #0a071a 100%);
-    border: 2px solid #3a2880;
-    border-radius: 0 0 110px 110px / 0 0 70px 70px;
-    box-shadow:
-      inset 0 6px 18px rgba(176,140,255,.2),
-      inset 0 -10px 30px rgba(0,0,0,.6),
-      0 0 24px rgba(106,61,240,.4);
-    overflow: hidden;
-  }
-  .bowl::before {
-    content: "";
-    position: absolute;
-    top: 8px; left: 8px;
-    width: 30px; height: 8px;
-    background: rgba(176,140,255,.25);
-    border-radius: 50%;
-    filter: blur(2px);
-  }
-  /* runic etching */
-  .bowl::after {
-    content: "ᚱᚢ ᚠᛟ ᚲᚨ";
-    position: absolute;
-    bottom: 18px;
-    left: 0; right: 0;
-    text-align: center;
-    color: var(--berry);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    letter-spacing: .3em;
-    opacity: .5;
-    text-shadow: 0 0 6px var(--berry);
-  }
-  .orbs {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 90px;
-  }
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #b08cff, #4a2bd0 60%, #1a0a5a 100%);
-    box-shadow:
-      0 0 8px rgba(176,140,255,.7),
-      inset -2px -3px 4px rgba(0,0,0,.4),
-      inset 2px 2px 3px rgba(255,255,255,.3);
-    animation: bob 4s ease-in-out infinite;
-  }
-  .orb.gold {
-    background: radial-gradient(circle at 30% 30%, #ffe091, #c89a30 60%, #5a3a08 100%);
-    box-shadow: 0 0 10px rgba(245,200,96,.7), inset -2px -3px 4px rgba(0,0,0,.4), inset 2px 2px 3px rgba(255,255,255,.4);
-  }
-  .orb.pink { background: radial-gradient(circle at 30% 30%, #ffb8dd, #c93f8a 60%, #5a0e3a 100%); box-shadow: 0 0 10px rgba(255,111,191,.6), inset -2px -3px 4px rgba(0,0,0,.4), inset 2px 2px 3px rgba(255,255,255,.4); }
-  /* hand-place */
-  .orb:nth-child(1) { width: 28px; height: 28px; left: 18px; bottom: 6px; animation-delay: 0s; }
-  .orb:nth-child(2) { width: 24px; height: 24px; left: 50px; bottom: 30px; animation-delay: -.5s; }
-  .orb:nth-child(3) { width: 32px; height: 32px; left: 78px; bottom: 4px; animation-delay: -1s; }
-  .orb:nth-child(4) { width: 22px; height: 22px; left: 112px; bottom: 32px; animation-delay: -1.5s; }
-  .orb:nth-child(5) { width: 30px; height: 30px; left: 138px; bottom: 8px; animation-delay: -2s; }
-  .orb:nth-child(6) { width: 22px; height: 22px; left: 168px; bottom: 28px; animation-delay: -2.5s; }
-  .orb:nth-child(7) { width: 18px; height: 18px; left: 32px; bottom: 50px; animation-delay: -3s; }
-  .orb:nth-child(8) { width: 16px; height: 16px; left: 92px; bottom: 50px; animation-delay: -1.2s; }
-  .orb:nth-child(9) { width: 18px; height: 18px; left: 152px; bottom: 50px; animation-delay: -2.7s; }
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-  }
-  .glow-aura {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 240px;
-    height: 60px;
-    background: radial-gradient(ellipse, rgba(176,140,255,.35) 0%, transparent 65%);
-    filter: blur(8px);
-    z-index: -1;
-    animation: pulse-aura 3s ease-in-out infinite;
-  }
-  @keyframes pulse-aura {
-    0%, 100% { opacity: .5; }
-    50% { opacity: 1; }
-  }
-  .steam {
-    position: absolute;
-    bottom: 100px;
-    width: 6px;
-    height: 30px;
-    background: linear-gradient(180deg, transparent, rgba(176,140,255,.5), transparent);
-    border-radius: 50%;
-    filter: blur(3px);
-    animation: rise 3s ease-in infinite;
-  }
-  .steam.s1 { left: calc(50% - 30px); animation-delay: 0s; }
-  .steam.s2 { left: calc(50% + 4px); animation-delay: -1s; }
-  .steam.s3 { left: calc(50% + 28px); animation-delay: -2s; }
-  @keyframes rise {
-    0% { transform: translateY(20px) scale(.6); opacity: 0; }
-    50% { opacity: .8; }
-    100% { transform: translateY(-30px) scale(1.4); opacity: 0; }
-  }
+/* ── Completed goal state ── */
+.goal.done .circle {
+  opacity: 0.45;
+}
+.goal.done .goal-body {
+  opacity: 0.38;
+}
+.goal.done .circle::after {
+  content: '✓';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0d1a0d;
+  border: 1.5px solid rgba(110,200,110,0.75);
+  color: #7edd7e;
+  font-family: sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(100,210,100,0.5);
+  z-index: 3;
+}
 
-  .bowl-desc {
-    font-family: 'Crimson Text', serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--ink);
-    opacity: .9;
-    margin: 0 0 16px;
-  }
-  .bowl-desc .em {
-    color: var(--gold-soft);
-    font-weight: 600;
-    font-style: italic;
-  }
-  .bowl-desc .berry {
-    color: var(--berry-light);
-    font-weight: 600;
-  }
-  .bowl-tag {
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    letter-spacing: .25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    text-align: center;
-    border-top: 1px dashed rgba(245,200,96,.3);
-    padding-top: 14px;
-    margin-top: 6px;
-  }
-  .bowl-tag span { display: block; font-style: italic; font-family: 'Crimson Text', serif; letter-spacing: .04em; text-transform: none; color: var(--ink-dim); margin-top: 6px; font-size: 13px; }
+/* ── Circle ── */
+.circle {
+  flex-shrink: 0;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid;
+  position: relative;
+  z-index: 2;
+}
 
-  .bowl-stat {
-    display: flex;
-    justify-content: space-around;
-    margin: 14px 0 18px;
-    padding: 10px 0;
-    border-top: 1px solid rgba(122,77,255,.2);
-    border-bottom: 1px solid rgba(122,77,255,.2);
-  }
-  .bowl-stat div {
-    text-align: center;
-  }
-  .bowl-stat strong {
-    display: block;
-    font-family: 'Cinzel', serif;
-    color: var(--gold-soft);
-    font-size: 18px;
-    font-weight: 700;
-  }
-  .bowl-stat small {
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: .25em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
+.c-purple {
+  background: #0d0a1e;
+  border-color: rgba(192,132,252,0.65);
+  box-shadow: 0 0 18px rgba(124,58,237,0.4), inset 0 0 10px rgba(124,58,237,0.1);
+}
+.c-pink {
+  background: #120418;
+  border-color: rgba(244,63,138,0.75);
+  box-shadow: 0 0 22px rgba(244,63,138,0.45), inset 0 0 10px rgba(244,63,138,0.1);
+}
+.c-gold {
+  background: #120e00;
+  border-color: rgba(245,200,66,0.75);
+  box-shadow: 0 0 22px rgba(245,200,66,0.45), inset 0 0 10px rgba(245,200,66,0.1);
+}
+.c-red {
+  background: #120000;
+  border-color: rgba(232,64,64,0.75);
+  box-shadow: 0 0 26px rgba(232,64,64,0.5), inset 0 0 12px rgba(232,64,64,0.1);
+}
 
-  /* Bunny mascots — small floating buddies near header */
-  .mascot {
-    position: absolute;
-    width: 110px;
-    image-rendering: pixelated;
-    opacity: .95;
-    filter: drop-shadow(0 0 16px rgba(122,77,255,.4));
-    animation: bob 5s ease-in-out infinite;
-    z-index: 10;
-  }
-  .mascot.left { left: -60px; top: 38%; transform: rotate(-6deg); }
-  .mascot.right { right: -60px; top: 42%; transform: rotate(8deg); animation-delay: -2s; }
+.circle-num {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  line-height: 1;
+  font-size: 22px;
+}
+.circle-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+.c-purple .circle-num { color: #e2caff; text-shadow: 0 0 10px rgba(192,132,252,0.8); }
+.c-purple .circle-sub { color: #c084fc; }
+.c-pink   .circle-num { color: #ffcce0; text-shadow: 0 0 10px rgba(244,63,138,0.8); }
+.c-pink   .circle-sub { color: #f472b6; }
+.c-gold   .circle-num { color: #fff0aa; text-shadow: 0 0 10px rgba(245,200,66,0.8); }
+.c-gold   .circle-sub { color: #f5c842; }
+.c-red    .circle-num { color: #ffcaca; text-shadow: 0 0 10px rgba(232,64,64,0.8); }
+.c-red    .circle-sub { color: #e84040; }
 
-  body[data-vibe="cozy"] .page { filter: saturate(.85) brightness(1.05); }
-  body[data-vibe="chaos"] .page { filter: saturate(1.35) contrast(1.08); }
-  body[data-vibe="chaos"] .card { box-shadow: inset 0 1px 0 rgba(176,140,255,.12), 0 10px 28px rgba(255,80,180,.18), 0 0 24px rgba(122,77,255,.25); }
-  body[data-vibe="cozy"] .card { box-shadow: inset 0 1px 0 rgba(255,224,145,.08), 0 8px 24px rgba(0,0,0,.35); }
-  @keyframes jitter {
-    0%,100% { transform: translateY(-4px) rotate(0); }
-    50% { transform: translateY(-5px) rotate(.5deg); }
-  }
-  body[data-vibe="chaos"] .card:hover { animation: jitter .35s ease-in-out infinite; }
+/* ── Goal body ── */
+.goal-body { flex: 1; min-width: 0; padding-top: 8px; }
 
-  /* Foot */
-  footer {
-    text-align: center;
-    margin-top: 48px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(122,77,255,.15);
-    color: #c9b8ff;
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    letter-spacing: .5em;
-    text-transform: uppercase;
-    width: 100%;
-    max-width: 880px;
-  }
-  footer .heart { color: var(--crimson); }
+.goal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+  line-height: 1.3;
+}
+.goal-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 15.5px;
+  color: #e0d4f8;
+  line-height: 1.65;
+  font-weight: 500;
+}
 
-  @media (max-width: 768px) {
-    .page { flex-direction: column; align-items: stretch; padding: 12px 16px 60px; gap: 24px; }
-    aside.sperm-bowl {
-      position: static;
-      top: auto;
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      flex-shrink: 1;
-      order: 2;
-    }
-    .menu-col { order: 1; align-items: stretch; width: 100%; }
-    /* Move sperm panel between header and first chapter via flex order on its parent's children */
-    header { padding: 8px 0 12px; }
-    .grid { grid-template-columns: 1fr !important; gap: 16px; max-width: 100%; }
-    .chapter { padding: 12px 0 8px; max-width: 100%; }
-    .chapter-name { font-size: 22px; }
-    .chapter-label::before, .chapter-label::after { width: 40px; }
-    .header-rule { width: 90%; }
-    h1.title { font-size: clamp(36px, 11vw, 64px); padding-left: 24px; padding-right: 24px; }
-    .crest { font-size: 9px; letter-spacing: .35em; }
-    .crest::before, .crest::after { width: 24px; }
-    .subtitle { font-size: 13px; letter-spacing: .4em; }
-    .tagline { font-size: 15px; padding: 0 8px; }
-    .item-action { font-size: 14px; }
-    .item-name { font-size: 16px; }
-    .mascot { width: 56px; opacity: .8; }
-    .mascot.left { left: -10px; top: 30%; }
-    .mascot.right { right: -10px; top: 34%; }
-    .bowl-title { font-size: 22px; }
-    .bits-badge { font-size: 12px; padding: 6px 11px; }
-    .bits-badge .num { font-size: 14px; }
-  }
-  @media (max-width: 420px) {
-    .mascot { display: none; }
-    h1.title { font-size: clamp(32px, 10vw, 52px); padding-left: 12px; padding-right: 12px; }
-  }
-  @media (max-width: 1100px) and (min-width: 769px) {
-    .page { flex-direction: column; align-items: center; padding: 16px 24px 60px; }
-    aside.sperm-bowl { position: static; width: 100%; max-width: 880px; margin: 0; flex-shrink: 1; }
-    .grid { grid-template-columns: repeat(2, 1fr); }
-    .mascot { display: none; }
-  }
+.goal-divider {
+  height: 1px;
+  margin: 0;
+  background: linear-gradient(90deg,
+    rgba(192,132,252,0) 0px,
+    rgba(192,132,252,0.12) 67px,
+    rgba(192,132,252,0.07) 60%,
+    transparent 100%
+  );
+}
+
+/* ── MILESTONE BANNER ── */
+.milestone-banner {
+  position: relative;
+  border-radius: 16px;
+  padding: 26px 28px 26px 22px;
+  margin: 28px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  overflow: hidden;
+}
+.milestone-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 0% 50%, rgba(255,255,255,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.milestone-banner::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  animation: ms-shimmer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ms-shimmer {
+  0%  { left: -100%; }
+  60% { left: 150%; }
+  100%{ left: 150%; }
+}
+
+.ms-25  { background: linear-gradient(135deg, #2a0828 0%, #1a0518 100%); border: 1.5px solid rgba(244,63,138,0.45); box-shadow: 0 4px 40px rgba(244,63,138,0.14), inset 0 0 30px rgba(244,63,138,0.04); }
+.ms-50  { background: linear-gradient(135deg, #201500 0%, #140e00 100%); border: 1.5px solid rgba(245,200,66,0.45);  box-shadow: 0 4px 40px rgba(245,200,66,0.13),  inset 0 0 30px rgba(245,200,66,0.04);  }
+.ms-100 { background: linear-gradient(135deg, #200000 0%, #130000 100%); border: 1.5px solid rgba(232,64,64,0.5);    box-shadow: 0 4px 50px rgba(232,64,64,0.17),    inset 0 0 40px rgba(232,64,64,0.05);    }
+
+/* ── Unlocked milestone state ── */
+.milestone-banner.unlocked.ms-25  {
+  border-color: rgba(244,63,138,0.9);
+  box-shadow: 0 4px 50px rgba(244,63,138,0.35), 0 0 80px rgba(244,63,138,0.1), inset 0 0 40px rgba(244,63,138,0.08);
+  background: linear-gradient(135deg, #3d0836 0%, #260525 100%);
+}
+.milestone-banner.unlocked.ms-50  {
+  border-color: rgba(245,200,66,0.9);
+  box-shadow: 0 4px 50px rgba(245,200,66,0.35), 0 0 80px rgba(245,200,66,0.1), inset 0 0 40px rgba(245,200,66,0.08);
+  background: linear-gradient(135deg, #2e1f00 0%, #1e1400 100%);
+}
+.milestone-banner.unlocked.ms-100 {
+  border-color: rgba(232,64,64,0.9);
+  box-shadow: 0 4px 50px rgba(232,64,64,0.35), 0 0 80px rgba(232,64,64,0.1), inset 0 0 40px rgba(232,64,64,0.08);
+  background: linear-gradient(135deg, #2e0000 0%, #1e0000 100%);
+}
+
+.ms-reached-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.ms-25  .ms-reached-badge { color: #ffb0d4; background: rgba(244,63,138,0.15); border: 1px solid rgba(244,63,138,0.4); }
+.ms-50  .ms-reached-badge { color: #ffe89a; background: rgba(245,200,66,0.15); border: 1px solid rgba(245,200,66,0.4); }
+.ms-100 .ms-reached-badge { color: #ffb0b0; background: rgba(232,64,64,0.15);  border: 1px solid rgba(232,64,64,0.4);  }
+
+.ms-circle {
+  flex-shrink: 0;
+  width: 74px; height: 74px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid;
+  overflow: hidden;
+}
+.ms-25  .ms-circle { background: rgba(10,4,16,0.6);  border-color: rgba(244,63,138,0.7); box-shadow: 0 0 22px rgba(244,63,138,0.4); }
+.ms-50  .ms-circle { background: rgba(10,8,0,0.6);   border-color: rgba(245,200,66,0.7); box-shadow: 0 0 22px rgba(245,200,66,0.4); }
+.ms-100 .ms-circle { background: rgba(10,2,2,0.6);   border-color: rgba(232,64,64,0.7);  box-shadow: 0 0 26px rgba(232,64,64,0.45); }
+.ms-circle img { width: 42px; height: 42px; object-fit: contain; }
+.ms-25  .ms-circle img { filter: drop-shadow(0 0 6px rgba(244,63,138,0.9)); }
+.ms-50  .ms-circle img { filter: drop-shadow(0 0 6px rgba(245,200,66,0.9)); }
+.ms-100 .ms-circle img { filter: drop-shadow(0 0 6px rgba(232,64,64,0.9));  }
+
+/* Unlocked milestone — icon pulses */
+.milestone-banner.unlocked .ms-circle img {
+  animation: ms-pulse 2.8s ease-in-out infinite alternate;
+}
+@keyframes ms-pulse {
+  from { transform: scale(1);    filter: drop-shadow(0 0 6px currentColor); }
+  to   { transform: scale(1.08); filter: drop-shadow(0 0 14px currentColor); }
+}
+.milestone-banner.unlocked.ms-25  .ms-circle img { filter: drop-shadow(0 0 10px rgba(244,63,138,1)); }
+.milestone-banner.unlocked.ms-50  .ms-circle img { filter: drop-shadow(0 0 10px rgba(245,200,66,1)); }
+.milestone-banner.unlocked.ms-100 .ms-circle img { filter: drop-shadow(0 0 10px rgba(232,64,64,1));  }
+
+.ms-body { flex: 1; }
+.ms-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 6px; opacity: 0.65;
+}
+.ms-25  .ms-label { color: var(--pink); }
+.ms-50  .ms-label { color: var(--gold); }
+.ms-100 .ms-label { color: var(--red);  }
+
+.ms-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 900; font-size: 20px; line-height: 1.2; margin-bottom: 7px;
+}
+.ms-25  .ms-title { color: #ffb0d4; text-shadow: 0 0 18px rgba(244,63,138,0.5); }
+.ms-50  .ms-title { color: #ffe89a; text-shadow: 0 0 18px rgba(245,200,66,0.5); }
+.ms-100 .ms-title { color: #ffb0b0; text-shadow: 0 0 18px rgba(232,64,64,0.5);  }
+
+.milestone-banner.unlocked.ms-25  .ms-title { text-shadow: 0 0 28px rgba(244,63,138,0.9), 0 0 50px rgba(244,63,138,0.4); }
+.milestone-banner.unlocked.ms-50  .ms-title { text-shadow: 0 0 28px rgba(245,200,66,0.9), 0 0 50px rgba(245,200,66,0.4); }
+.milestone-banner.unlocked.ms-100 .ms-title { text-shadow: 0 0 28px rgba(232,64,64,0.9),  0 0 50px rgba(232,64,64,0.4);  }
+
+.ms-desc { font-family: 'EB Garamond', serif; font-size: 14.5px; line-height: 1.65; }
+.ms-25  .ms-desc { color: #f0d0e0; }
+.ms-50  .ms-desc { color: #f0e8cc; }
+.ms-100 .ms-desc { color: #f0d0d0; }
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 32px 0 20px;
+  user-select: none;
+}
+.footer p {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(192,132,252,0.3);
+  cursor: default;
+}
+
+/* ── Admin panel ── */
+#admin-panel {
+  display: none;
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: rgba(8,6,20,0.98);
+  border: 1px solid rgba(192,132,252,0.35);
+  border-radius: 16px;
+  padding: 22px 22px 18px;
+  width: 240px;
+  z-index: 300;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.8), 0 0 30px rgba(124,58,237,0.12);
+  backdrop-filter: blur(16px);
+}
+#admin-panel h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 4px;
+  color: var(--purple-l);
+  margin-bottom: 18px; text-transform: uppercase;
+  opacity: 0.8;
+}
+.admin-row { margin-bottom: 16px; }
+.admin-row label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 10px; text-transform: uppercase;
+}
+.admin-row label span {
+  font-size: 18px;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  color: var(--purple-l);
+  letter-spacing: 0;
+}
+.admin-row input[type=range] {
+  width: 100%;
+  accent-color: var(--purple-l);
+  cursor: pointer;
+  height: 4px;
+}
+.admin-save {
+  width: 100%;
+  margin-top: 4px;
+  padding: 9px;
+  background: rgba(124,58,237,0.18);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 10px;
+  color: var(--white);
+  font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.admin-save:hover { background: rgba(124,58,237,0.35); border-color: rgba(192,132,252,0.6); }
+.admin-close {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none;
+  color: var(--muted); font-size: 16px; cursor: pointer;
+  line-height: 1;
+}
+.admin-close:hover { color: var(--white); }
+
+/* ── Auth modal ── */
+#auth-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+}
+#auth-modal.open { display: flex; }
+.auth-box {
+  background: rgba(8,6,20,0.99);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 18px;
+  padding: 30px 28px;
+  width: 280px;
+  box-shadow: 0 8px 50px rgba(0,0,0,0.9);
+}
+.auth-box h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: 4px;
+  color: var(--purple-l);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.auth-box p {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+.auth-box input[type=password] {
+  width: 100%;
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(192,132,252,0.2);
+  border-radius: 10px;
+  color: var(--white);
+  padding: 10px 14px;
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  outline: none;
+  margin-bottom: 14px;
+  transition: border-color 0.2s;
+}
+.auth-box input[type=password]:focus { border-color: rgba(192,132,252,0.6); }
+.auth-box input[type=password].error { border-color: rgba(232,64,64,0.7); animation: shake 0.3s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px); }
+}
+.auth-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(124,58,237,0.2);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 10px;
+  color: var(--white);
+  font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.auth-btn:hover { background: rgba(124,58,237,0.4); }
+.auth-cancel {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.auth-cancel:hover { opacity: 1; }
+
+/* ── Tweaks ── */
+#tweaks-panel {
+  display: none;
+  position: fixed;
+  bottom: 24px; left: 24px;
+  background: rgba(10,8,23,0.97);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 16px;
+  padding: 20px;
+  width: 230px;
+  z-index: 200;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+  backdrop-filter: blur(14px);
+}
+#tweaks-panel h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--purple-l);
+  margin-bottom: 16px; text-transform: uppercase;
+}
+.tweak-row { margin-bottom: 14px; }
+.tweak-row label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 6px; text-transform: uppercase;
+}
+.tweak-row select {
+  width: 100%;
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(192,132,252,0.2);
+  border-radius: 8px;
+  color: var(--white);
+  padding: 6px 10px;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  outline: none; cursor: pointer;
+}
+.tweak-row input[type=range] { width: 100%; accent-color: var(--purple-l); cursor: pointer; }
+.tweak-close {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none;
+  color: var(--muted); font-size: 18px; cursor: pointer;
+}
+.tweak-close:hover { color: var(--white); }
+
+@media (max-width: 900px) {
+  .char-wrap { display: none; }
+  .center-col { width: 100%; max-width: 600px; }
+}
 </style>
 </head>
 <body>
 
-<div class="deco" id="deco"></div>
+<div class="stars"><canvas id="star-canvas"></canvas></div>
 
-<img src="images/Char_Mask.png" class="side-char left" alt="" />
-<img src="images/Char_Wings.png" class="side-char right" alt="" />
+<div class="outer">
 
-<div class="page">
-
-  <div class="menu-col">
-
-  <header>
-    <img src="images/Heart_Protector_Bunny.png" class="mascot left" alt="" />
-    <img src="images/Blue_Bunny.png" class="mascot right" alt="" />
-    <img src="images/Logo_Banner.png" class="header-logo" alt="BlueberryVibezz" />
-    <div class="crest">★ BlueberryVibezz Cursed Café ★</div>
-    <h1 class="title">Berry&nbsp;Café</h1>
-    <p class="subtitle">Bits Menu</p>
-    <div class="header-rule"></div>
-    <p class="tagline">A <span class="accent">cursed cozy</span> pixel café — every bit you spend pulls a string. Order at your own peril.</p>
-  </header>
-
-  <!-- CHAPTER I -->
-  <section class="chapter">
-    <div class="chapter-label">✦ Chapter I ✦</div>
-    <div class="chapter-name">Small Sips</div>
-    <div class="chapter-range">— 25 to 300 bits —</div>
-  </section>
-
-  <section class="grid">
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">25</span> BITS</div>
-      <div class="img-wrap"><img src="images/Berry_Latte.png" alt="Berry Grey latte"></div>
-      <h3 class="item-name">Berry Grey</h3>
-      <p class="item-action">Make me read your username like a boxing match announcement.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">50</span> BITS</div>
-      <div class="img-wrap"><img src="images/Blueberry_Milk.png" alt="Blueberry milk"></div>
-      <h3 class="item-name">Blueberry Milk</h3>
-      <p class="item-action">Make me do a 20 second POV diary monologue about you.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">150</span> BITS</div>
-      <div class="img-wrap"><img src="images/Streamer_Tears.png" alt="Streamer's tears bottle"></div>
-      <h3 class="item-name">Streamer's Tears</h3>
-      <p class="item-action">Make me chug the whole water bottle.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">300</span> BITS</div>
-      <div class="img-wrap"><img src="images/Zen_Berry_Brew.png" alt="Zen berry brew"></div>
-      <h3 class="item-name">Zen Berry Brew</h3>
-      <p class="item-action">Make me put on a facemask.</p>
-    </a>
-  </section>
-
-  <!-- CHAPTER II -->
-  <section class="chapter">
-    <div class="chapter-label">✦ Chapter II ✦</div>
-    <div class="chapter-name">Getting Weird</div>
-    <div class="chapter-range">— 1500 to 2500 bits —</div>
-  </section>
-
-  <section class="grid">
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">1500</span> BITS</div>
-      <div class="img-wrap"><img src="images/Panic_shot.png" alt="Panic shot"></div>
-      <h3 class="item-name">Panic Shot</h3>
-      <p class="item-action">Make me eat a super sour lemon.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">2500</span> BITS</div>
-      <div class="img-wrap"><img src="images/Unhinged_Berry_Soda.png" alt="Unhinged berry soda"></div>
-      <h3 class="item-name">Unhinged Berry Soda</h3>
-      <p class="item-action">Make me spin the penalty wheel twice and take a shot.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">2500</span> BITS</div>
-      <div class="img-wrap"><img src="images/Spicy_Berry_Potion.png" alt="Spicy berry potion"></div>
-      <h3 class="item-name">Spicy Berry Potion</h3>
-      <p class="item-action">Make me eat something super spicy.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">2500</span> BITS</div>
-      <div class="img-wrap"><img src="images/Midnight_Berry_Refresher.png" alt="Midnight berry refresher"></div>
-      <h3 class="item-name">Midnight Berry Refresher</h3>
-      <p class="item-action">Make me go lights off and whisper ASMR for 5 minutes.</p>
-    </a>
-  </section>
-
-  <!-- CHAPTER III -->
-  <section class="chapter">
-    <div class="chapter-label">✦ Chapter III ✦</div>
-    <div class="chapter-name">Full Chaos</div>
-    <div class="chapter-range">— 5000 bits —</div>
-  </section>
-
-  <section class="grid">
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">5000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Berry_Deluxe_Cocoa.png" alt="Deluxe berry cocoa"></div>
-      <h3 class="item-name">Deluxe Berry Cocoa</h3>
-      <p class="item-action">Make me take whipped cream to the face.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">5000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Blue_Frenzy.png" alt="Blue frenzy energy can"></div>
-      <h3 class="item-name">Blue Frenzy</h3>
-      <p class="item-action">Make me do the full Gangnam Style dance.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">5000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Berry_Meltdown.png" alt="Berry meltdown slushie"></div>
-      <h3 class="item-name">Berry Meltdown</h3>
-      <p class="item-action">Make me pour water on my head and stare into the camera.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">5000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Blueberry_Bliss_Cheesecake.png" alt="Blueberry bliss cheesecake"></div>
-      <h3 class="item-name">Blueberry Bliss Cheesecake</h3>
-      <p class="item-action">Make me wear the cat suit with drawn whiskers and a voice changer for the rest of stream.</p>
-    </a>
-  </section>
-
-  <!-- CHAPTER IV -->
-  <section class="chapter">
-    <div class="chapter-label">✦ Chapter IV ✦</div>
-    <div class="chapter-name">Endgame</div>
-    <div class="chapter-range">— 10 000 bits —</div>
-  </section>
-
-  <section class="grid">
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">10000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Berry_Overstack.png" alt="Berry overstack pancakes"></div>
-      <h3 class="item-name">Berry Overstack</h3>
-      <p class="item-action">Make me go full chaos mode — lights off, LEDs on, entire setup switched for the rest of stream.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">10000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Oni_Toast.png" alt="Oni toast"></div>
-      <h3 class="item-name">Oni Toast</h3>
-      <p class="item-action">Make me eat a huge spoon of super spicy sauce and read your chosen Wikipedia page out loud — no water until it's done.</p>
-    </a>
-    <a class="card" href="https://www.twitch.tv/popout/blueberryvibezz/extensions/y00k8pvmggnkvjr99gj9gxi63sb3wz/panel" target="_blank" rel="noopener noreferrer">
-      <div class="bits-badge"><span class="num">10000</span> BITS</div>
-      <div class="img-wrap"><img src="images/Cursed_Berry_Croissant.png" alt="Cursed berry croissant"></div>
-      <h3 class="item-name">Cursed Berry Croissant</h3>
-      <p class="item-action">Make me put on the Dino suit and dance.</p>
-    </a>
-  </section>
-
-  <footer>
-    ✦ Berry Fam · Stay Cursed · Stay Cozy ✦ <span class="heart">♥</span>
-  </footer>
-
-  </div><!-- /.menu-col -->
-
-  <aside class="sperm-bowl" aria-label="Berry Sperm Bowl — 6 month subscriber legacy">
-    <div class="bowl-card">
-      <p class="bowl-eyebrow">✦ 6 Month Legacy ✦</p>
-      <h2 class="bowl-title"><span class="icon">🫧</span>Berry Sperm Bowl</h2>
-      <div class="orb-stage">
-        <div class="steam s1"></div>
-        <div class="steam s2"></div>
-        <div class="steam s3"></div>
-        <div class="glow-aura"></div>
-        <div class="bowl">
-          <div class="orbs">
-            <div class="orb"></div>
-            <div class="orb gold"></div>
-            <div class="orb"></div>
-            <div class="orb pink"></div>
-            <div class="orb gold"></div>
-            <div class="orb"></div>
-            <div class="orb pink"></div>
-            <div class="orb"></div>
-            <div class="orb gold"></div>
-          </div>
-        </div>
-      </div>
-      <p class="bowl-desc">
-        You've been here for <span class="em">6 months</span> — and that means something. Subscribe for <span class="em">6 months</span> and earn your place in the <span class="berry">Berry Sperm Bowl</span>. An unhinged bowl full of unhinged blueberries, each carrying a name that belongs to the berry family.
-      </p>
-      <p class="bowl-desc">
-        After subscribing for <span class="em">6 months</span>, <span class="em">YOU</span> get to pick your blueberry — then <span class="em">Blueberryvibezz</span> writes your name on it and drops it into the bowl, <span class="berry">live on stream</span>. Your name. Your blueberry. In the bowl forever.
-      </p>
-      <div class="bowl-tag">
-        ✦ Earn Your Blueberry ✦
-      </div>
+  <!-- LEFT CHAR -->
+  <div class="char-wrap char-left">
+    <div class="bunny-side-wrap">
+      <span class="sparkle">✦</span>
+      <span class="sparkle">✧</span>
+      <span class="sparkle">✦</span>
+      <span class="sparkle">✧</span>
+      <span class="sparkle">✦</span>
+      <img class="bunny-side" src="uploads/bunny_new1_nobg.png" alt="">
     </div>
-  </aside>
+    <img src="uploads/char1_nobg.png" alt="">
+  </div>
+
+  <!-- CENTER -->
+  <div class="center-col">
+
+    <!-- LOGO -->
+    <div class="logo-wrap">
+      <img src="uploads/logo2_nobg.png" alt="BlueberryVibezz">
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+      <h1 class="main-title">
+        <span class="celebration">Celebration</span>
+        <span class="sub-goals-word">Sub Goals</span>
+      </h1>
+      <div class="header-rule" style="margin-top:20px">
+        <div class="line"></div>
+        <span class="rune">✦</span>
+        <div class="line"></div>
+      </div>
+    </header>
+
+    <!-- CHAPTER I -->
+    <div class="section-head">✦ &nbsp; Chapter I &nbsp;—&nbsp; First Steps &nbsp; ✦</div>
+    <div class="quest-list" id="tier1"></div>
+
+    <!-- CHAPTER II -->
+    <div class="section-head">✦ &nbsp; Chapter II &nbsp;—&nbsp; Rising Chaos &nbsp; ✦</div>
+    <div class="quest-list" id="tier2"></div>
+
+    <!-- MILESTONE 25 -->
+    <div class="milestone-banner ms-25" id="ms25"></div>
+
+    <!-- CHAPTER III -->
+    <div class="section-head">✦ &nbsp; Chapter III &nbsp;—&nbsp; The Deep End &nbsp; ✦</div>
+    <div class="quest-list" id="tier3"></div>
+
+    <!-- MILESTONE 50 -->
+    <div class="milestone-banner ms-50" id="ms50"></div>
+
+    <!-- CHAPTER IV -->
+    <div class="section-head">✦ &nbsp; Chapter IV &nbsp;—&nbsp; Endgame &nbsp; ✦</div>
+    <div class="quest-list" id="tier4"></div>
+
+    <!-- MILESTONE 100 -->
+    <div class="milestone-banner ms-100" id="ms100"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="footer">
+      <p id="footer-text">✦ &nbsp; Berry Fam, Let's Gooo &nbsp; ✦</p>
+    </footer>
+
+  </div>
+
+  <!-- RIGHT CHAR -->
+  <div class="char-wrap char-right">
+    <div class="bunny-side-wrap">
+      <span class="sparkle">✦</span>
+      <span class="sparkle">✧</span>
+      <span class="sparkle">✦</span>
+      <span class="sparkle">✧</span>
+      <span class="sparkle">✦</span>
+      <img class="bunny-side" src="uploads/bunny_new2_nobg.png" alt="">
+    </div>
+    <img src="uploads/char_right2_nobg.png" alt="">
+  </div>
 
 </div>
 
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel">
-  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-    "vibe": "chaos",
-    "density": "compact",
-    "sparkleStorm": 120
-  }/*EDITMODE-END*/;
+<!-- AUTH MODAL -->
+<div id="auth-modal">
+  <div class="auth-box">
+    <h3>Admin</h3>
+    <p>Ange lösenordet för att uppdatera sub-räknaren.</p>
+    <input type="password" id="auth-input" placeholder="Lösenord…" autocomplete="off">
+    <button class="auth-btn" onclick="submitAuth()">Logga in</button>
+    <span class="auth-cancel" onclick="closeAuth()">Avbryt</span>
+  </div>
+</div>
 
-  function applyVibe(v) {
-    document.body.dataset.vibe = v;
-  }
-  function applyDensity(d) {
-    const root = document.documentElement;
-    if (d === 'compact') {
-      root.style.setProperty('--card-pad', '12px 14px 14px');
-      root.style.setProperty('--grid-gap', '14px');
-      root.style.setProperty('--chapter-pad', '10px 0');
-    } else if (d === 'spacious') {
-      root.style.setProperty('--card-pad', '22px 24px 26px');
-      root.style.setProperty('--grid-gap', '32px');
-      root.style.setProperty('--chapter-pad', '32px 0 28px');
-    } else {
-      root.style.setProperty('--card-pad', '16px 18px 18px');
-      root.style.setProperty('--grid-gap', '22px');
-      root.style.setProperty('--chapter-pad', '18px 0');
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <button class="admin-close" onclick="closeAdmin()">✕</button>
+  <h3>Sub-räknare</h3>
+  <div class="admin-row">
+    <label>Antal subs <span id="admin-val">0</span></label>
+    <input type="range" id="admin-slider" min="0" max="100" step="1" value="0" oninput="previewSubs(this.value)">
+  </div>
+  <button class="admin-save" onclick="saveSubs()">Spara & uppdatera</button>
+</div>
+
+<!-- TWEAKS (T-tangent) -->
+<div id="tweaks-panel">
+  <button class="tweak-close" onclick="closeTweaks()">✕</button>
+  <h3>Tweaks</h3>
+  <div class="tweak-row">
+    <label>Accent</label>
+    <select onchange="setAccent(this.value)">
+      <option value="purple">Mystic Purple</option>
+      <option value="pink">Neon Pink</option>
+      <option value="teal">Dark Teal</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <label>Stars</label>
+    <select onchange="setStars(this.value)">
+      <option value="low">Few</option>
+      <option value="medium" selected>Medium</option>
+      <option value="high">Many</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <label>Text size</label>
+    <input type="range" min="0.85" max="1.2" step="0.05" value="1.2" oninput="setScale(this.value)">
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// ADMIN CONFIG — byt lösenord här
+const ADMIN_PASSWORD = 'blueberry';
+const STORAGE_KEY    = 'bv_subs';
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── SVG ICONS ────────────────────────────────────────────────────────────────
+const icons = {
+  pen:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+  cat:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-3.3 0-6 2.7-6 6v2h12v-2c0-3.3-2.7-6-6-6z"/><path d="M9 8V5l3 3 3-3v3"/><circle cx="9.5" cy="13.5" r="0.5" fill="currentColor"/><circle cx="14.5" cy="13.5" r="0.5" fill="currentColor"/></svg>`,
+  mustache:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 11c-1.5 0-3 .8-4 2-.7.8-1.5 1-2.5.8C4.4 13.5 3 12.5 2 11.5c.5 2 2 3.5 4 3.5 1 0 2-.5 3-1.5.5-.5 1-.8 1.5-.8h3c.5 0 1 .3 1.5.8 1 1 2 1.5 3 1.5 2 0 3.5-1.5 4-3.5-1 1-2.4 2-3.5 2.3-1 .2-1.8 0-2.5-.8-1-1.2-2.5-2-4-2z"/></svg>`,
+  wheel:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><line x1="12" y1="3" x2="12" y2="10"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="3" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="21" y2="12"/><line x1="5.6" y1="5.6" x2="9.2" y2="9.2"/><line x1="14.8" y1="14.8" x2="18.4" y2="18.4"/><line x1="18.4" y1="5.6" x2="14.8" y2="9.2"/><line x1="9.2" y1="14.8" x2="5.6" y2="18.4"/></svg>`,
+  mic:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/></svg>`,
+  crown:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18M3 18l3-10 4.5 5L12 5l1.5 8L18 8l3 10H3z"/></svg>`,
+  shots:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="14" rx="1"/><path d="M8 8h8"/><path d="M9 22h6l1-6H8l1 6z"/></svg>`,
+  cringe:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3"/></svg>`,
+  confetti:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l8 19 3-8 8-3L3 3z"/><line x1="12" y1="12" x2="20" y2="4"/></svg>`,
+  pie:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0110 10H12V2z"/><path d="M12 12a10 10 0 01-7.07-2.93"/><path d="M12 22a10 10 0 010-20"/></svg>`,
+  mask:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 5 4 9v3c0 4 3.6 8 8 8s8-4 8-8V9c0-4-4-7-8-7z"/><path d="M9 11h.01M15 11h.01"/><path d="M9 15c.8 1 1.8 1.5 3 1.5s2.2-.5 3-1.5"/></svg>`,
+  dino:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c1 0 3 1 3 3s-1 3-3 4v2l1 2-4 1v2l-3 1-1-3H8l-2 4H4l1-5-1-2 2-3v-3c0-3 2-5 5-5h5l1 3z"/></svg>`,
+  paint:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c0-4.4 4-8 9-8s9 3.6 9 8c0 1.4-1.8 2-3 1-1-.8-2-1-2-1H9"/><path d="M5 20a1 1 0 100-2 1 1 0 000 2z" fill="currentColor" stroke="none"/><path d="M5 18c0-3 1-6 4-8"/></svg>`,
+  blend:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-4 7h4l-8 11 2-7H6L10 7z"/></svg>`,
+  maid:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 014 4v1H8V6a4 4 0 014-4z"/><path d="M8 7v3a4 4 0 008 0V7"/><path d="M5 21l2-7h10l2 7H5z"/></svg>`,
+  ghost:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 10h.01M15 10h.01"/><path d="M12 2a9 9 0 019 9v10l-3-2-3 2-3-2-3 2-3-2V11A9 9 0 0112 2z"/></svg>`,
+  spicy:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-2 3-2 6s2 5 2 5-2 1-2 4 2 5 6 5c2 0 4-1 4-3s-2-3-4-3c-1 0-2 .5-2 .5S15 15 15 12s-3-10-3-10z"/></svg>`,
+};
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const tier1Goals = [
+  { num:1,  icon:'pen',      title:'First Name + Secret Message',    desc:'Your first name and a special message or drawing goes on the secret for now!' },
+  { num:3,  icon:'cat',      title:'Cat Suit ON!',                   desc:'The cat suit comes out — full meow mode activated.' },
+  { num:4,  icon:'mustache', title:'Mustache Time!!',                desc:'A mustache on the face and something written on the forehead. No questions asked.' },
+  { num:5,  icon:'wheel',    title:'Penalty Wheel',                  desc:'Wheel of Names with chaotic punishments: ice bath for the hand, eat something gross, shout something silly out the window…' },
+  { num:7,  icon:'mic',      title:'Voice Changer — 10 Minutes',     desc:'Berry Fam picks the voice effect. Stream continues in full chaos mode.' },
+  { num:10, icon:'crown',    title:'BERRY FAM Takes Control!',       desc:'Berry Family decides ONE thing via poll — game mode or something totally silly to be done in-game.' },
+];
+const tier2Goals = [
+  { num:15, icon:'shots',  title:'3 Shots + Penalty Wheel', desc:'3 shots MUST be taken!!! Followed immediately by a spin of the penalty wheel.' },
+  { num:20, icon:'cringe', title:'Cringe Challenge',        desc:'BERRY FAM decides the most embarrassing challenge. You asked for it.' },
+];
+const tier3Goals = [
+  { num:30, icon:'pie',  title:'Pie to the Face & Egg',  desc:'Exactly what it says — pie to the face AND an egg. Pure chaos.' },
+  { num:40, icon:'mask', title:'COSPLAY STREAM!!',        desc:'BERRY FAMILY decides the cosplay look, revealed in the next stream.' },
+];
+const tier4Goals = [
+  { num:60, icon:'paint', title:'The Human Canvas',                   desc:'Chat votes on a makeup look using household items: lipstick as blush, eyeliner on the forehead, toothpaste as highlighter — stays on until stream ends.' },
+  { num:70, icon:'blend', title:'Blind Taste Test: Kitchen Roulette', desc:"Berry Fam picks 3 ingredients that don't go together (e.g., mustard, jam & milk). Blended into a smoothie and drunk in one gulp." },
+  { num:80, icon:'maid',  title:'Cursed Cosplay + Trombone Champ + Modded RE', desc:'Maid outfit (intentionally cursed), Trombone Champ with song requests, AND Modded RE — Berry Family picks the mods.' },
+  { num:90, icon:'ghost', title:'Horror Mode: Lights Off, Volume MAX', desc:'A really scary game in the dark at full volume. Chat can trigger jump scares — Channel Points for small & medium ones, Bits for the SUPER scary ones.' },
+];
+
+const milestoneData = {
+  ms25:  { label:'✦ Milestone — 25 Subs ✦',       img:'uploads/icon_confetti.png', title:'CONFETTI BOMB!!',                       threshold:25, desc:'Real confetti on camera, big celebration, ALL names from the secret are read out loud, dancing, and great music. This is a full-on PARTY.' },
+  ms50:  { label:'✦ Milestone — 50 Subs ✦',       img:'uploads/icon_dino.png',     title:'DINO SUIT ON & LET THE DANCING BEGIN!!', threshold:50, desc:'The dino suit goes on and the dancing does NOT stop. Berry Fam, you absolutely earned this one.' },
+  ms100: { label:'✦ Final Milestone — 100 Subs ✦', img:'uploads/icon_spicy.png',    title:'Spicy Challenge & Cake Bake!!',          threshold:100, desc:"Something really spicy eaten during a round of Pacify, Outlast Trials, or Phasmo (no water until the round ends). One more bite per sub during that round. PLUS an IRL bake-a-cake stream where chat decides every single ingredient." },
+};
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+let currentSubs = parseInt(localStorage.getItem(STORAGE_KEY) ?? '26', 10);
+
+function renderTier(id, goals) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  goals.forEach((g, i) => {
+    const done = g.num <= currentSubs;
+    const numSize = g.num >= 10 ? '17px' : '22px';
+    const row = document.createElement('div');
+    row.className = 'goal' + (done ? ' done' : '');
+    row.innerHTML = `
+      <div class="circle c-purple">
+        <span class="circle-num" style="font-size:${numSize}">${g.num}</span>
+        <span class="circle-sub">subs</span>
+      </div>
+      <div class="goal-body">
+        <div class="goal-title">${g.title}</div>
+        <div class="goal-desc">${g.desc}</div>
+      </div>`;
+    el.appendChild(row);
+    if (i < goals.length - 1) {
+      const div = document.createElement('div');
+      div.className = 'goal-divider';
+      el.appendChild(div);
     }
-  }
-  function applySparkles(n) {
-    const deco = document.getElementById('deco');
-    if (!deco) return;
-    deco.innerHTML = '';
-    const imgs = [
-      'images/Berry_Latte.png',
-      'images/Blueberry_Milk.png',
-      'images/Streamer_Tears.png',
-      'images/Zen_Berry_Brew.png',
-      'images/Panic_shot.png',
-      'images/Unhinged_Berry_Soda.png',
-      'images/Spicy_Berry_Potion.png',
-      'images/Midnight_Berry_Refresher.png',
-      'images/Berry_Deluxe_Cocoa.png',
-      'images/Blue_Frenzy.png',
-      'images/Berry_Meltdown.png',
-      'images/Blueberry_Bliss_Cheesecake.png',
-      'images/Berry_Overstack.png',
-      'images/Oni_Toast.png',
-      'images/Cursed_Berry_Croissant.png',
-    ];
-    const COUNT = Math.max(28, Math.round(n * 0.25));
-    for (let i = 0; i < COUNT; i++) {
-      const el = document.createElement('img');
-      el.className = 'float-img';
-      el.src = imgs[i % imgs.length];
-      el.alt = '';
-      const size = 60 + Math.random() * 30;
-      const dur = 15 + Math.random() * 20;
-      const delay = -Math.random() * dur;
-      const rot = (Math.random() * 40 - 20).toFixed(1);
-      const rotEnd = (Math.random() * 40 - 20).toFixed(1);
-      const op = (0.12 + Math.random() * 0.06).toFixed(2);
-      el.style.width = size + 'px';
-      el.style.left = (Math.random() * 100) + '%';
-      el.style.top = (100 + Math.random() * 5) + '%';
-      el.style.animationDuration = dur + 's';
-      el.style.animationDelay = delay + 's';
-      el.style.setProperty('--rot', rot + 'deg');
-      el.style.setProperty('--rot-end', rotEnd + 'deg');
-      el.style.setProperty('--op', op);
-      deco.appendChild(el);
-    }
+  });
+}
+
+function renderMilestone(id, d) {
+  const el = document.getElementById(id);
+  const reached = currentSubs >= d.threshold;
+  if (reached) el.classList.add('unlocked');
+  else          el.classList.remove('unlocked');
+  el.innerHTML = `
+    ${reached ? '<span class="ms-reached-badge">✦ Reached ✦</span>' : ''}
+    <div class="ms-circle">
+      <img src="${d.img}" alt="">
+    </div>
+    <div class="ms-body">
+      <div class="ms-label">${d.label}</div>
+      <div class="ms-title">${d.title}</div>
+      <div class="ms-desc">${d.desc}</div>
+    </div>`;
+}
+
+function renderAll() {
+  renderTier('tier1', tier1Goals);
+  renderTier('tier2', tier2Goals);
+  renderTier('tier3', tier3Goals);
+  renderTier('tier4', tier4Goals);
+  renderMilestone('ms25',  milestoneData.ms25);
+  renderMilestone('ms50',  milestoneData.ms50);
+  renderMilestone('ms100', milestoneData.ms100);
+}
+
+renderAll();
+
+// ── STARS + FIREWORKS ────────────────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('star-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [], W, H;
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+  function makeStars(n) {
+    stars = Array.from({length: n}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.2+0.2,
+      a: Math.random(), speed: Math.random()*0.003+0.001,
+      phase: Math.random()*Math.PI*2,
+    }));
   }
 
-  // Inject item-name watermark into each card image
-  function applyWatermarks() {
-    document.querySelectorAll('.card').forEach(card => {
-      const wrap = card.querySelector('.img-wrap');
-      const name = card.querySelector('.item-name');
-      if (!wrap || !name) return;
-      if (wrap.querySelector('.img-watermark')) return;
-      const wm = document.createElement('span');
-      wm.className = 'img-watermark';
-      wm.textContent = name.textContent;
-      wm.setAttribute('aria-hidden', 'true');
-      wrap.appendChild(wm);
+  let fireworks = [];
+  function spawnFirework() {
+    const x = Math.random() * W;
+    const y = Math.random() * H * 0.6;
+    const hue = [280, 320, 200, 45][Math.floor(Math.random()*4)];
+    fireworks.push(...Array.from({length: 18}, () => {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2.5 + 0.8;
+      return { x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, life: 1, hue };
+    }));
+  }
+
+  let fwTimer = 0;
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      const alpha = s.a * (0.5 + 0.5 * Math.sin(t * s.speed * 1000 + s.phase));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(200,180,255,${alpha})`; ctx.fill();
     });
-  }
-  applyWatermarks();
-
-  function App() {
-    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-    React.useEffect(() => { applyVibe(t.vibe); }, [t.vibe]);
-    React.useEffect(() => { applyDensity(t.density); }, [t.density]);
-    React.useEffect(() => { applySparkles(t.sparkleStorm); }, [t.sparkleStorm]);
-    return (
-      <TweaksPanel>
-        <TweakSection label="Café Vibe" />
-        <TweakRadio label="Mood" value={t.vibe}
-                    options={['cozy', 'cursed', 'chaos']}
-                    onChange={(v) => setTweak('vibe', v)} />
-        <TweakSection label="Layout" />
-        <TweakRadio label="Density" value={t.density}
-                    options={['compact', 'regular', 'spacious']}
-                    onChange={(v) => setTweak('density', v)} />
-        <TweakSection label="Atmosphere" />
-        <TweakSlider label="Sparkle storm" value={t.sparkleStorm}
-                     min={0} max={120} step={2} unit=" ☆"
-                     onChange={(v) => setTweak('sparkleStorm', v)} />
-      </TweaksPanel>
-    );
+    if (++fwTimer > 80) {
+      spawnFirework();
+      if (Math.random() > 0.5) spawnFirework();
+      fwTimer = 0;
+    }
+    fireworks = fireworks.filter(p => p.life > 0);
+    fireworks.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.life -= 0.018;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${p.hue},100%,75%,${p.life})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
   }
 
-  const mountTweaks = () => {
-    const el = document.createElement('div');
-    document.body.appendChild(el);
-    ReactDOM.createRoot(el).render(<App />);
-  };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountTweaks);
+  resize(); makeStars(180);
+  window.addEventListener('resize', () => { resize(); makeStars(180); });
+  requestAnimationFrame(draw);
+  window._makeStars = makeStars;
+})();
+
+// ── ADMIN — footer-klick (5×) öppnar auth-modal ──────────────────────────────
+let footerClicks = 0, footerTimer = null;
+document.getElementById('footer-text').addEventListener('click', () => {
+  footerClicks++;
+  clearTimeout(footerTimer);
+  footerTimer = setTimeout(() => { footerClicks = 0; }, 2500);
+  if (footerClicks >= 5) {
+    footerClicks = 0;
+    openAuth();
+  }
+});
+
+function openAuth() {
+  const modal = document.getElementById('auth-modal');
+  const input = document.getElementById('auth-input');
+  modal.classList.add('open');
+  input.value = '';
+  input.classList.remove('error');
+  setTimeout(() => input.focus(), 60);
+}
+function closeAuth() {
+  document.getElementById('auth-modal').classList.remove('open');
+}
+function submitAuth() {
+  const input = document.getElementById('auth-input');
+  if (input.value === ADMIN_PASSWORD) {
+    closeAuth();
+    openAdmin();
   } else {
-    mountTweaks();
+    input.classList.remove('error');
+    void input.offsetWidth; // reflow to restart animation
+    input.classList.add('error');
+    input.value = '';
+    input.focus();
   }
-</script>
+}
+document.getElementById('auth-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitAuth();
+  if (e.key === 'Escape') closeAuth();
+});
+document.getElementById('auth-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('auth-modal')) closeAuth();
+});
 
+function openAdmin() {
+  const slider = document.getElementById('admin-slider');
+  const val    = document.getElementById('admin-val');
+  slider.value = currentSubs;
+  val.textContent = currentSubs;
+  document.getElementById('admin-panel').style.display = 'block';
+}
+function closeAdmin() {
+  document.getElementById('admin-panel').style.display = 'none';
+}
+function previewSubs(v) {
+  document.getElementById('admin-val').textContent = v;
+}
+function saveSubs() {
+  currentSubs = parseInt(document.getElementById('admin-slider').value, 10);
+  localStorage.setItem(STORAGE_KEY, currentSubs);
+  renderAll();
+  closeAdmin();
+}
+
+// ── TWEAKS (T-tangent) ───────────────────────────────────────────────────────
+function setAccent(val) {
+  const map = { purple:['#7c3aed','#c084fc'], pink:['#c2185b','#f472b6'], teal:['#0d7373','#2dd4bf'] };
+  const [p, pl] = map[val] || map.purple;
+  document.documentElement.style.setProperty('--purple', p);
+  document.documentElement.style.setProperty('--purple-l', pl);
+}
+function setStars(val) {
+  const c = { low:60, medium:180, high:380 };
+  window._makeStars && window._makeStars(c[val] || 180);
+}
+function setScale(val) {
+  document.documentElement.style.fontSize = (parseFloat(val) * 16) + 'px';
+}
+function closeTweaks() {
+  document.getElementById('tweaks-panel').style.display = 'none';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 't' || e.key === 'T') {
+    const p = document.getElementById('tweaks-panel');
+    p.style.display = p.style.display === 'block' ? 'none' : 'block';
+  }
+});
+
+document.documentElement.style.fontSize = (1.2 * 16) + 'px';
+</script>
 </body>
 </html>
